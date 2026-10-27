@@ -1,0 +1,10 @@
+{
+  "$schema": "https://finos.github.io/ai-reference-architecture-library/Library/reference_architecture/agentic_ai/multi_agent/calm/controls/requirements/FINOS-PREV-018-002.requirement.json",
+  "control-id": "FINOS-PREV-018-002",
+  "name": "Atomic Shared-Limit Reservation and Monotonic Delegation Attenuation",
+  "description": "System owners must enforce atomic shared-limit reservations across concurrent agents and attenuate delegated authority monotonically across agent hops so no sub-agent exceeds its parent mandate's scope or remaining budget.",
+  "limit-reservation-semantics": "two-phase-reserve-commit",
+  "delegation-attenuation-rule": "strict-subset-scope-and-budget",
+  "max-delegation-depth": 3,
+  "cross-institution-verification": "cryptographic-mandate-chain-and-counterparty-policy"
+}

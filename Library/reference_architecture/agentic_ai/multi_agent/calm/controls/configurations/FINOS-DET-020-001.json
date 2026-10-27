@@ -1,0 +1,17 @@
+{
+  "$schema": "https://finos.github.io/ai-reference-architecture-library/Library/reference_architecture/agentic_ai/multi_agent/calm/controls/requirements/FINOS-DET-020-001.requirement.json",
+  "control-id": "FINOS-DET-020-001",
+  "name": "Deterministic Runtime and Collective-Exposure Circuit Breakers",
+  "description": "System owners must enforce fail-closed runtime circuit breakers across individual and collective multi-agent systemic exposure triggers (ST-01 through ST-05) with mandatory human-governed reset.",
+  "mandatory-state-triggers": [
+    "ST-01-velocity-and-rate-anomaly",
+    "ST-02-scope-and-authority-violation",
+    "ST-03-loop-and-recursion-exhaustion",
+    "ST-04-data-boundary-and-egress-violation",
+    "ST-05-collective-systemic-exposure-breach"
+  ],
+  "in-flight-reservation-handling": "rollback-uncommitted-and-quarantine-session",
+  "collective-exposure-aggregation-window-ms": 500,
+  "auto-reset-permitted": false,
+  "minimum-reset-approvers": 2
+}

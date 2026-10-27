@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://finos.github.io/ai-reference-architecture-library/Library/reference_architecture/agentic_ai/multi_agent/calm/controls/requirements/FINOS-DET-020-001.requirement.json",
+  "title": "Deterministic Runtime and Collective-Exposure Circuit Breakers",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "https://calm.finos.org/controls/2025-03/meta/control-requirement.json"
+    }
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "control-id": {
+      "const": "FINOS-DET-020-001"
+    },
+    "name": {
+      "const": "Deterministic Runtime and Collective-Exposure Circuit Breakers"
+    },
+    "description": {
+      "const": "System owners must enforce fail-closed runtime circuit breakers across individual and collective multi-agent systemic exposure triggers (ST-01 through ST-05) with mandatory human-governed reset."
+    },
+    "mandatory-state-triggers": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ST-01-velocity-and-rate-anomaly",
+          "ST-02-scope-and-authority-violation",
+          "ST-03-loop-and-recursion-exhaustion",
+          "ST-04-data-boundary-and-egress-violation",
+          "ST-05-collective-systemic-exposure-breach"
+        ]
+      },
+      "minItems": 5,
+      "uniqueItems": true
+    },
+    "in-flight-reservation-handling": {
+      "type": "string",
+      "enum": [
+        "rollback-uncommitted-and-quarantine-session",
+        "freeze-and-escalate-to-risk-desk"
+      ],
+      "description": "Required deterministic handling of in-flight uncommitted reservations when a circuit breaker trips."
+    },
+    "collective-exposure-aggregation-window-ms": {
+      "type": "integer",
+      "minimum": 10,
+      "maximum": 60000,
+      "description": "Sliding window in milliseconds for evaluating aggregate multi-agent exposure across concurrent instances."
+    },
+    "auto-reset-permitted": {
+      "const": false,
+      "description": "Circuit breakers must remain open until explicit dual-control human governance review completes."
+    },
+    "minimum-reset-approvers": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 10,
+      "description": "Minimum number of authorized human approvers required to reset a tripped circuit breaker."
+    }
+  },
+  "required": [
+    "control-id",
+    "name",
+    "description",
+    "mandatory-state-triggers",
+    "in-flight-reservation-handling",
+    "collective-exposure-aggregation-window-ms",
+    "auto-reset-permitted",
+    "minimum-reset-approvers"
+  ],
+  "additionalProperties": false
+}

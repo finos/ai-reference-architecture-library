@@ -1,0 +1,16 @@
+{
+  "$schema": "https://finos.github.io/ai-reference-architecture-library/Library/reference_architecture/agentic_ai/multi_agent/calm/controls/requirements/FINOS-PREV-019-001.requirement.json",
+  "control-id": "FINOS-PREV-019-001",
+  "name": "Ensuring Appropriate Authorization Level",
+  "description": "System owners must ensure selected tools don't exceed the agent's or user's authorization level for the current transaction.",
+  "effective-authorization": "min(user,agent)",
+  "transaction-scope-source": "request-context",
+  "tool-decision-point": "pre-execution",
+  "required-decision-inputs": [
+    "user-id",
+    "agent-id",
+    "transaction-id",
+    "requested-tool",
+    "requested-action"
+  ]
+}

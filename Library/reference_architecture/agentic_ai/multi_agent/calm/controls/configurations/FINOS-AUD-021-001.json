@@ -1,0 +1,17 @@
+{
+  "$schema": "https://finos.github.io/ai-reference-architecture-library/Library/reference_architecture/agentic_ai/multi_agent/calm/controls/requirements/FINOS-AUD-021-001.requirement.json",
+  "control-id": "FINOS-AUD-021-001",
+  "name": "Independently Verifiable COSE_Sign1 and IETF SCITT Decision Receipts",
+  "description": "System owners must emit signed, append-only IETF SCITT (RFC 9162) / COSE_Sign1 cryptographic audit receipts for every state-mutating agent decision to enable offline regulatory verification.",
+  "receipt-envelope-format": "ietf-scitt-cose-sign1-rfc9162",
+  "required-receipt-claims": [
+    "mandate-id",
+    "policy-digest",
+    "inputs-hash",
+    "execution-environment-attestation-digest",
+    "decision-verdict",
+    "monotonic-sequence-number"
+  ],
+  "offline-verification-supported": true,
+  "minimum-retention-days": 2555
+}

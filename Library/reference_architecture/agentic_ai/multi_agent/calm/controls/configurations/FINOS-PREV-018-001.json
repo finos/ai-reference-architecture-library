@@ -1,0 +1,20 @@
+{
+  "$schema": "https://finos.github.io/ai-reference-architecture-library/Library/reference_architecture/agentic_ai/multi_agent/calm/controls/requirements/FINOS-PREV-018-001.requirement.json",
+  "control-id": "FINOS-PREV-018-001",
+  "name": "Commitment-Time Mandate Scope and Freshness Verification",
+  "description": "System owners must verify the resolved action against the active mandate's scope, value ceiling, and non-revoked freshness at the point of commitment before executing any state-mutating tool or transaction.",
+  "verification-timing": "both-queue-and-commitment",
+  "max-mandate-staleness-seconds": 30,
+  "on-uncertain-prior-outcome": "hold-and-reconcile",
+  "required-mandate-claims": [
+    "mandate-id",
+    "mandate-version",
+    "principal-id",
+    "agent-id",
+    "permitted-actions",
+    "per-action-value-ceiling",
+    "cumulative-budget-ceiling",
+    "expiry-timestamp",
+    "idempotency-key"
+  ]
+}
