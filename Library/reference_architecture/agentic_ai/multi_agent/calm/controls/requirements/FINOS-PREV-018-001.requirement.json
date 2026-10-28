@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://finos.github.io/ai-reference-architecture-library/Library/reference_architecture/agentic_ai/multi_agent/calm/controls/requirements/FINOS-PREV-018-001.requirement.json",
+  "title": "Commitment-Time Mandate Scope and Freshness Verification",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "https://calm.finos.org/controls/2025-03/meta/control-requirement.json"
+    }
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "control-id": {
+      "const": "FINOS-PREV-018-001"
+    },
+    "name": {
+      "const": "Commitment-Time Mandate Scope and Freshness Verification"
+    },
+    "description": {
+      "const": "System owners must verify the resolved action against the active mandate's scope, value ceiling, and non-revoked freshness at the point of commitment before executing any state-mutating tool or transaction."
+    },
+    "verification-timing": {
+      "type": "string",
+      "enum": ["at-commitment", "both-queue-and-commitment"],
+      "description": "Mandate checks must execute at the point of commitment to prevent stale-authority execution."
+    },
+    "max-mandate-staleness-seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 300,
+      "description": "Maximum age in seconds of a mandate revocation/freshness check before commitment is blocked."
+    },
+    "on-uncertain-prior-outcome": {
+      "type": "string",
+      "enum": ["hold-and-reconcile", "fail-closed-escalate"],
+      "description": "Required behavior when a prior execution attempt has an unknown outcome to prevent duplicate settlement."
+    },
+    "required-mandate-claims": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "mandate-id",
+          "mandate-version",
+          "principal-id",
+          "agent-id",
+          "permitted-actions",
+          "per-action-value-ceiling",
+          "cumulative-budget-ceiling",
+          "expiry-timestamp",
+          "idempotency-key"
+        ]
+      },
+      "minItems": 6,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "control-id",
+    "name",
+    "description",
+    "verification-timing",
+    "max-mandate-staleness-seconds",
+    "on-uncertain-prior-outcome",
+    "required-mandate-claims"
+  ],
+  "additionalProperties": false
+}

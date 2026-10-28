@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://finos.github.io/ai-reference-architecture-library/Library/reference_architecture/agentic_ai/multi_agent/calm/controls/requirements/FINOS-AUD-021-001.requirement.json",
+  "title": "Independently Verifiable COSE_Sign1 and IETF SCITT Decision Receipts",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "https://calm.finos.org/controls/2025-03/meta/control-requirement.json"
+    }
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "control-id": {
+      "const": "FINOS-AUD-021-001"
+    },
+    "name": {
+      "const": "Independently Verifiable COSE_Sign1 and IETF SCITT Decision Receipts"
+    },
+    "description": {
+      "const": "System owners must emit signed, append-only IETF SCITT (RFC 9162) / COSE_Sign1 cryptographic audit receipts for every state-mutating agent decision to enable offline regulatory verification."
+    },
+    "receipt-envelope-format": {
+      "type": "string",
+      "enum": [
+        "ietf-scitt-cose-sign1-rfc9162",
+        "jws-rfc7515-append-only-merkle"
+      ],
+      "description": "Open cryptographic receipt envelope format for offline audit verification."
+    },
+    "required-receipt-claims": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "mandate-id",
+          "policy-digest",
+          "inputs-hash",
+          "execution-environment-attestation-digest",
+          "decision-verdict",
+          "monotonic-sequence-number"
+        ]
+      },
+      "minItems": 6,
+      "uniqueItems": true
+    },
+    "offline-verification-supported": {
+      "const": true,
+      "description": "Receipts must be independently verifiable offline without trusting mutable application databases."
+    },
+    "minimum-retention-days": {
+      "type": "integer",
+      "minimum": 2555,
+      "maximum": 7300,
+      "description": "Minimum regulatory audit retention period in days (7 years = 2555 days)."
+    }
+  },
+  "required": [
+    "control-id",
+    "name",
+    "description",
+    "receipt-envelope-format",
+    "required-receipt-claims",
+    "offline-verification-supported",
+    "minimum-retention-days"
+  ],
+  "additionalProperties": false
+}

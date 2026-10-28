@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://finos.github.io/ai-reference-architecture-library/Library/reference_architecture/agentic_ai/multi_agent/calm/controls/requirements/FINOS-PREV-018-002.requirement.json",
+  "title": "Atomic Shared-Limit Reservation and Monotonic Delegation Attenuation",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "https://calm.finos.org/controls/2025-03/meta/control-requirement.json"
+    }
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "control-id": {
+      "const": "FINOS-PREV-018-002"
+    },
+    "name": {
+      "const": "Atomic Shared-Limit Reservation and Monotonic Delegation Attenuation"
+    },
+    "description": {
+      "const": "System owners must enforce atomic shared-limit reservations across concurrent agents and attenuate delegated authority monotonically across agent hops so no sub-agent exceeds its parent mandate's scope or remaining budget."
+    },
+    "limit-reservation-semantics": {
+      "type": "string",
+      "enum": ["two-phase-reserve-commit", "serialized-ledger-lock"],
+      "description": "Mechanism preventing concurrent agents from double-spending a shared mandate limit."
+    },
+    "delegation-attenuation-rule": {
+      "type": "string",
+      "enum": ["strict-subset-scope-and-budget", "no-subdelegation-permitted"],
+      "description": "Child agent authority must be a strict mathematical subset of parent scope and remaining budget."
+    },
+    "max-delegation-depth": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Maximum permitted multi-agent delegation hop depth."
+    },
+    "cross-institution-verification": {
+      "type": "string",
+      "enum": ["cryptographic-mandate-chain-and-counterparty-policy", "bilateral-mtls-and-signed-intent"],
+      "description": "How receiving institutions verify delegated agent authority across organizational boundaries."
+    }
+  },
+  "required": [
+    "control-id",
+    "name",
+    "description",
+    "limit-reservation-semantics",
+    "delegation-attenuation-rule",
+    "max-delegation-depth",
+    "cross-institution-verification"
+  ],
+  "additionalProperties": false
+}

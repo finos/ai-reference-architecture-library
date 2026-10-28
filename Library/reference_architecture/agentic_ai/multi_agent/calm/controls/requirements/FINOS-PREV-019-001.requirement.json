@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://finos.github.io/ai-reference-architecture-library/Library/reference_architecture/agentic_ai/multi_agent/calm/controls/requirements/FINOS-PREV-019-001.requirement.json",
+  "title": "Ensuring Appropriate Authorization Level",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "https://calm.finos.org/controls/2025-03/meta/control-requirement.json"
+    }
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "control-id": {
+      "const": "FINOS-PREV-019-001"
+    },
+    "name": {
+      "const": "Ensuring Appropriate Authorization Level"
+    },
+    "description": {
+      "const": "System owners must ensure selected tools don't exceed the agent's or user's authorization level for the current transaction."
+    },
+    "effective-authorization": {
+      "type": "string",
+      "enum": ["min(user,agent)", "user-only", "agent-only"],
+      "description": "How to compute the authorization boundary that tool selection must respect."
+    },
+    "transaction-scope-source": {
+      "type": "string",
+      "enum": ["request-context", "case-management-system", "workflow-engine", "other"],
+      "description": "Where the transaction context/scope comes from."
+    },
+    "tool-decision-point": {
+      "type": "string",
+      "enum": ["pre-execution", "pre-planning", "both"],
+      "description": "When tool authorization checks must occur."
+    },
+    "required-decision-inputs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "user-id",
+          "agent-id",
+          "transaction-id",
+          "transaction-scope",
+          "requested-tool",
+          "requested-action",
+          "requested-resource"
+        ]
+      },
+      "minItems": 3,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "control-id",
+    "name",
+    "description",
+    "effective-authorization",
+    "transaction-scope-source",
+    "tool-decision-point",
+    "required-decision-inputs"
+  ],
+  "additionalProperties": false
+}

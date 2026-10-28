@@ -1,0 +1,669 @@
+{
+  "$schema": "https://calm.finos.org/release/1.2/meta/calm.json",
+  "unique-id": "finos-ai-ra-multi-agent-v1",
+  "name": "FINOS Multi-Agent Reference Architecture (CALM Model)",
+  "description": "Machine-readable CALM v1.2 representation of the FINOS Multi-Agent Reference Architecture and its April 2026 Threat Model (36 controls C1-C36 mapped across all 58 threats T-UIL-01..T-XL-04 and AIGF mitigations MI-18..MI-21).",
+  "metadata": [
+    {
+      "reference-architecture-version": "2026.04",
+      "source-architecture-doc": "Library/reference_architecture/agentic_ai/multi_agent/ra/ma_ref_arch_jan_2026.md",
+      "source-threat-model-doc": "Library/reference_architecture/agentic_ai/multi_agent/tm/tm_ma_ref_arch_apr_2026.md",
+      "fsi-agent-card-schema": "Library/reference_architecture/agentic_ai/agent_card/agent_card_schema.json",
+      "aigf-mitigations": ["MI-18", "MI-19", "MI-20", "MI-21"],
+      "layers": [
+        "User Interaction Layer",
+        "Agent Gateway Layer",
+        "Agent Layer",
+        "Knowledge Layer",
+        "LLM Layer",
+        "MCP Layer",
+        "Evaluation Layer",
+        "Observability Layer"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "unique-id": "user-actor",
+      "node-type": "actor",
+      "name": "User",
+      "description": "Individual analyst, employee, customer, or automated calling process initiating a request and reviewing outputs.",
+      "layer": "User Interaction Layer",
+      "controls": ["C4"]
+    },
+    {
+      "unique-id": "application-surface",
+      "node-type": "service",
+      "name": "Application",
+      "description": "Presentation and orchestration surface capturing user intent, enforcing HITL checkpoints, and sanitising rendered outputs.",
+      "layer": "User Interaction Layer",
+      "interfaces": [
+        {
+          "unique-id": "app-https-ingress",
+          "protocol": "HTTPS",
+          "port": 443
+        }
+      ],
+      "controls": ["C1", "C3", "C4", "C6", "C7", "C19", "C23", "C26"]
+    },
+    {
+      "unique-id": "agent-registry",
+      "node-type": "database",
+      "name": "Agent Registry",
+      "description": "Catalog of approved agents, signed FSI Agent Cards, capabilities, autonomy ceilings (A0-A4), and SR 11-7 model inventory links.",
+      "layer": "Agent Gateway Layer",
+      "data-classification": "CONFIDENTIAL",
+      "controls": ["C8", "C9", "C10", "C25", "C36"]
+    },
+    {
+      "unique-id": "agent-gateway",
+      "node-type": "service",
+      "name": "Agent Gateway",
+      "description": "Zero-trust entry point into the Agent Layer enforcing mTLS/SPIFFE workload identity, signed Agent Card verification, and routing.",
+      "layer": "Agent Gateway Layer",
+      "interfaces": [
+        {
+          "unique-id": "agent-gateway-mtls",
+          "protocol": "mTLS-SPIFFE-A2A",
+          "port": 8443
+        }
+      ],
+      "controls": ["C6", "C11", "C12", "C36"]
+    },
+    {
+      "unique-id": "agent-gateway-guardrails",
+      "node-type": "service",
+      "name": "Agent Gateway Guardrails and Policies",
+      "description": "Policy-as-Code and AI security inspection engine validating prompts, mandate scope/freshness (MI-18), and rate limits prior to agent dispatch.",
+      "layer": "Agent Gateway Layer",
+      "controls": ["C1", "C2", "C5", "C8", "C13"]
+    },
+    {
+      "unique-id": "supervisor-agent",
+      "node-type": "service",
+      "name": "Supervisor and Routing Agent",
+      "description": "Orchestrates Supervisor/Worker, Skills-Based Routing, and Agent-as-a-Tool patterns with strict-subset authority attenuation (MI-18).",
+      "layer": "Agent Layer",
+      "controls": ["C8", "C10", "C11", "C14", "C15", "C16", "C36"]
+    },
+    {
+      "unique-id": "worker-agent-pool",
+      "node-type": "service",
+      "name": "Specialized Worker Agents",
+      "description": "Scoped subordinate agents executing domain-bounded sub-tasks under attenuated workload identities and strict data domain boundaries.",
+      "layer": "Agent Layer",
+      "controls": ["C11", "C12", "C14", "C16", "C32", "C36"]
+    },
+    {
+      "unique-id": "unified-agent-runtime",
+      "node-type": "system",
+      "name": "Unified Agent Runtime",
+      "description": "Sandboxed execution environment managing task state, pause/resume integrity, collaboration handoffs, and resource quotas.",
+      "layer": "Agent Layer",
+      "controls": ["C9", "C11", "C12", "C14", "C15", "C20", "C22", "C28", "C29"]
+    },
+    {
+      "unique-id": "secure-execution-sandbox",
+      "node-type": "service",
+      "name": "Secure Execution and Built-in Tools Layer",
+      "description": "Intercepts and validates all tool call requests (Shell, I/O, Web Search), enforcing JIT task-scoped permissions, atomic shared-limit reservations (MI-18), and tool authorization levels (MI-19).",
+      "layer": "Agent Layer",
+      "controls": ["C1", "C2", "C8", "C9", "C14", "C17", "C19", "C28", "C29", "C32", "C33"]
+    },
+    {
+      "unique-id": "workspace-filesystem",
+      "node-type": "database",
+      "name": "Workspace File System",
+      "description": "Sandboxed path-scoped file storage with DLP scanning and full agent identity attribution.",
+      "layer": "Agent Layer",
+      "data-classification": "RESTRICTED",
+      "controls": ["C8", "C9", "C14", "C19"]
+    },
+    {
+      "unique-id": "adaptive-learning-component",
+      "node-type": "service",
+      "name": "Adaptive Learning",
+      "description": "Generates versioned, human-reviewed configuration refinement signals from validated execution outcomes.",
+      "layer": "Agent Layer",
+      "controls": ["C9", "C15", "C27"]
+    },
+    {
+      "unique-id": "mcp-client-bridge",
+      "node-type": "service",
+      "name": "MCP Client Bridge",
+      "description": "Secure bridge from Unified Agent Runtime to the external MCP Gateway enforcing data minimisation and parameter schema checks.",
+      "layer": "Agent Layer",
+      "controls": ["C12", "C28", "C32", "C35"]
+    },
+    {
+      "unique-id": "short-term-memory",
+      "node-type": "database",
+      "name": "Short-Term Memory (In-Session Context)",
+      "description": "Manages immediate reasoning context with untrusted input sanitisation and context-poisoning guards.",
+      "layer": "Agent Layer",
+      "data-classification": "RESTRICTED",
+      "controls": ["C2", "C14", "C33"]
+    },
+    {
+      "unique-id": "long-term-memory",
+      "node-type": "database",
+      "name": "Long-Term Memory Store",
+      "description": "Maintains cryptographically bound, cross-session isolated session summaries and personalization records.",
+      "layer": "Agent Layer",
+      "data-classification": "RESTRICTED",
+      "controls": ["C8", "C9", "C18", "C24", "C34"]
+    },
+    {
+      "unique-id": "source-bases",
+      "node-type": "database",
+      "name": "Authoritative Source Bases",
+      "description": "Structured, unstructured, and graph-based enterprise knowledge repositories with cryptographic ingestion integrity.",
+      "layer": "Knowledge Layer",
+      "data-classification": "RESTRICTED",
+      "controls": ["C8", "C18", "C19", "C24"]
+    },
+    {
+      "unique-id": "vector-db",
+      "node-type": "database",
+      "name": "Vector Databases",
+      "description": "Semantic retrieval store enforcing ABAC, embedding encryption, RAG validation, and source-trust weighting.",
+      "layer": "Knowledge Layer",
+      "data-classification": "RESTRICTED",
+      "controls": ["C8", "C15", "C19", "C24", "C33"]
+    },
+    {
+      "unique-id": "model-registry",
+      "node-type": "database",
+      "name": "Model Registry",
+      "description": "Catalog of vetted, cryptographically signed models with SBOMs and load-time signature verification.",
+      "layer": "LLM Layer",
+      "data-classification": "CONFIDENTIAL",
+      "controls": ["C5", "C8", "C10", "C24", "C25", "C30", "C31"]
+    },
+    {
+      "unique-id": "llm-gateway",
+      "node-type": "service",
+      "name": "LLM Gateway",
+      "description": "Controlled routing interface for approved model inference endpoints with mTLS and quota enforcement.",
+      "layer": "LLM Layer",
+      "interfaces": [
+        {
+          "unique-id": "llm-gateway-mtls",
+          "protocol": "mTLS-HTTPS",
+          "port": 8444
+        }
+      ],
+      "controls": ["C6", "C11", "C12", "C24"]
+    },
+    {
+      "unique-id": "llm-guardrails",
+      "node-type": "service",
+      "name": "LLM Guardrails and Policies",
+      "description": "Pre- and post-inference prompt injection filter, system-prompt leakage redaction, and policy-as-code enforcement.",
+      "layer": "LLM Layer",
+      "controls": ["C2", "C5", "C13", "C19", "C21", "C29"]
+    },
+    {
+      "unique-id": "mcp-server-registry",
+      "node-type": "database",
+      "name": "MCP Server Registry",
+      "description": "Catalog of signed, approved MCP servers with globally unique namespaced tool IDs and capability declarations.",
+      "layer": "MCP Layer",
+      "data-classification": "CONFIDENTIAL",
+      "controls": ["C8", "C9", "C10", "C13", "C31"]
+    },
+    {
+      "unique-id": "mcp-gateway",
+      "node-type": "service",
+      "name": "MCP Gateway",
+      "description": "Mandatory choke point for all MCP server connections enforcing mTLS/SPIFFE SVIDs and zero-trust micro-segmentation.",
+      "layer": "MCP Layer",
+      "interfaces": [
+        {
+          "unique-id": "mcp-gateway-mtls",
+          "protocol": "mTLS-SPIFFE-MCP",
+          "port": 8445
+        }
+      ],
+      "controls": ["C10", "C11", "C12", "C24", "C28"]
+    },
+    {
+      "unique-id": "mcp-guardrails",
+      "node-type": "service",
+      "name": "MCP Guardrails and Policies",
+      "description": "Validates MCP tool parameter schemas, domain authorization, and minimum(user,agent) effective authorization (MI-19).",
+      "layer": "MCP Layer",
+      "controls": ["C8", "C13", "C19", "C28", "C32", "C35"]
+    },
+    {
+      "unique-id": "feedback-engine",
+      "node-type": "service",
+      "name": "Feedback Engine",
+      "description": "Aggregates authenticated, multi-source evaluation signals with statistical anomaly detection.",
+      "layer": "Evaluation Layer",
+      "controls": ["C5", "C27"]
+    },
+    {
+      "unique-id": "human-supervision-gate",
+      "node-type": "service",
+      "name": "Human Supervision Gate",
+      "description": "Non-bypassable platform enforcement for HITL/HOTL checkpoints and regulatory reporting sign-off, cryptographically binding approvals to actions.",
+      "layer": "Evaluation Layer",
+      "controls": ["C3", "C9", "C26"]
+    },
+    {
+      "unique-id": "runtime-protection-circuit-breaker",
+      "node-type": "service",
+      "name": "Runtime Protection and Circuit Breaker Engine",
+      "description": "Stateful sliding-window monitor and fail-closed circuit breaker (MI-20 ST-01..ST-05) halting individual or collective multi-agent systemic exposure breaches.",
+      "layer": "Evaluation Layer",
+      "controls": ["C5", "C15", "C21", "C22"]
+    },
+    {
+      "unique-id": "observability-telemetry-hub",
+      "node-type": "system",
+      "name": "Observability Layer (WORM Logs, Signed Traces, Metrics, SIEM & Correlation Engine)",
+      "description": "Append-only WORM audit store, cryptographically signed trace/log collector, IETF SCITT (RFC 9162) decision receipt log (MI-21), longitudinal anomaly detector, and SOAR correlation engine.",
+      "layer": "Observability Layer",
+      "data-classification": "RESTRICTED",
+      "controls": ["C5", "C9", "C15", "C20", "C21"]
+    }
+  ],
+  "relationships": [
+    {
+      "unique-id": "rel-user-to-app",
+      "description": "User initiates requests and reviews HITL approval prompts at the Application surface.",
+      "relationship-type": {
+        "interacts": {
+          "actor": "user-actor",
+          "nodes": ["application-surface"]
+        }
+      },
+      "protocol": "HTTPS",
+      "controls": ["C1", "C3", "C4", "C6", "C7"]
+    },
+    {
+      "unique-id": "rel-app-to-agent-gateway",
+      "description": "Application forwards authenticated requests to the Agent Gateway.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "application-surface" },
+          "destination": { "node": "agent-gateway", "interfaces": ["agent-gateway-mtls"] }
+        }
+      },
+      "protocol": "mTLS-SPIFFE-A2A",
+      "controls": ["C6", "C11", "C12"]
+    },
+    {
+      "unique-id": "rel-agent-gateway-to-registry",
+      "description": "Agent Gateway resolves signed FSI Agent Cards and autonomy ceilings from the Agent Registry.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "agent-gateway" },
+          "destination": { "node": "agent-registry" }
+        }
+      },
+      "protocol": "mTLS",
+      "controls": ["C8", "C9", "C10", "C36"]
+    },
+    {
+      "unique-id": "rel-agent-gateway-to-guardrails",
+      "description": "Agent Gateway evaluates every inbound request against Agent Gateway Guardrails and Policies before routing.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "agent-gateway" },
+          "destination": { "node": "agent-gateway-guardrails" }
+        }
+      },
+      "protocol": "Internal-mTLS",
+      "controls": ["C1", "C2", "C5", "C13"]
+    },
+    {
+      "unique-id": "rel-guardrails-to-supervisor",
+      "description": "Validated requests are dispatched into the Unified Agent Runtime Supervisor Agent.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "agent-gateway-guardrails" },
+          "destination": { "node": "supervisor-agent" }
+        }
+      },
+      "protocol": "mTLS-SPIFFE-A2A",
+      "controls": ["C11", "C12", "C14", "C36"]
+    },
+    {
+      "unique-id": "rel-supervisor-to-workers",
+      "description": "Supervisor delegates sub-tasks to Worker Agents with strict-subset authority and MNPI data-domain verification.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "supervisor-agent" },
+          "destination": { "node": "worker-agent-pool" }
+        }
+      },
+      "protocol": "mTLS-SPIFFE-A2A",
+      "controls": ["C8", "C9", "C11", "C14", "C16", "C19", "C32", "C36"]
+    },
+    {
+      "unique-id": "rel-agents-in-runtime",
+      "description": "Supervisor and Worker Agents execute inside the sandboxed Unified Agent Runtime.",
+      "relationship-type": {
+        "deployed-in": {
+          "container": "unified-agent-runtime",
+          "nodes": [
+            "supervisor-agent",
+            "worker-agent-pool",
+            "secure-execution-sandbox",
+            "workspace-filesystem",
+            "adaptive-learning-component",
+            "mcp-client-bridge",
+            "short-term-memory",
+            "long-term-memory"
+          ]
+        }
+      },
+      "controls": ["C14", "C22", "C28", "C29"]
+    },
+    {
+      "unique-id": "rel-runtime-to-secure-execution",
+      "description": "All agent tool calls and state mutations are intercepted by Secure Execution for commitment-time mandate verification (MI-18) and tool scope validation (MI-19).",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "unified-agent-runtime" },
+          "destination": { "node": "secure-execution-sandbox" }
+        }
+      },
+      "protocol": "Internal-Sandbox-IPC",
+      "controls": ["C1", "C14", "C17", "C29", "C32"]
+    },
+    {
+      "unique-id": "rel-secure-exec-to-workspace",
+      "description": "Secure Execution mediates path-scoped reads and DLP-scanned writes to the Workspace File System.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "secure-execution-sandbox" },
+          "destination": { "node": "workspace-filesystem" }
+        }
+      },
+      "protocol": "Internal-Sandbox-IPC",
+      "controls": ["C8", "C9", "C14", "C19"]
+    },
+    {
+      "unique-id": "rel-runtime-to-memory",
+      "description": "Unified Agent Runtime reads and writes sanitised Short-Term and cryptographically isolated Long-Term Memory.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "unified-agent-runtime" },
+          "destination": { "node": "long-term-memory" }
+        }
+      },
+      "protocol": "mTLS",
+      "controls": ["C2", "C8", "C9", "C18", "C24", "C33", "C34"]
+    },
+    {
+      "unique-id": "rel-runtime-to-knowledge",
+      "description": "Agent Layer retrieves grounded context from Authoritative Source Bases and Vector DBs with ABAC, DLP scanning, and RAG sanitisation.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "unified-agent-runtime" },
+          "destination": { "node": "vector-db" }
+        }
+      },
+      "protocol": "mTLS",
+      "controls": ["C8", "C15", "C18", "C19", "C24", "C33"]
+    },
+    {
+      "unique-id": "rel-vector-to-sources",
+      "description": "Vector DB indexes validated and hashed documents from Authoritative Source Bases.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "vector-db" },
+          "destination": { "node": "source-bases" }
+        }
+      },
+      "protocol": "mTLS",
+      "controls": ["C8", "C18", "C24"]
+    },
+    {
+      "unique-id": "rel-runtime-to-llm-gateway",
+      "description": "Agent Layer submits model inference requests exclusively through the LLM Gateway.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "unified-agent-runtime" },
+          "destination": { "node": "llm-gateway", "interfaces": ["llm-gateway-mtls"] }
+        }
+      },
+      "protocol": "mTLS-HTTPS",
+      "controls": ["C2", "C11", "C12", "C24"]
+    },
+    {
+      "unique-id": "rel-llm-gateway-to-guardrails-and-registry",
+      "description": "LLM Gateway verifies model signatures against Model Registry and enforces LLM Guardrails on prompts and outputs.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "llm-gateway" },
+          "destination": { "node": "llm-guardrails" }
+        }
+      },
+      "protocol": "Internal-mTLS",
+      "controls": ["C2", "C5", "C10", "C13", "C21", "C25", "C29", "C30", "C31"]
+    },
+    {
+      "unique-id": "rel-llm-guardrails-to-model-registry",
+      "description": "LLM Gateway and Guardrails verify signed model metadata and SBOM status in the Model Registry.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "llm-guardrails" },
+          "destination": { "node": "model-registry" }
+        }
+      },
+      "protocol": "mTLS",
+      "controls": ["C8", "C10", "C24", "C25", "C30", "C31"]
+    },
+    {
+      "unique-id": "rel-mcp-client-to-mcp-gateway",
+      "description": "MCP Client Bridge routes all external tool calls exclusively through the MCP Gateway choke point.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "mcp-client-bridge" },
+          "destination": { "node": "mcp-gateway", "interfaces": ["mcp-gateway-mtls"] }
+        }
+      },
+      "protocol": "mTLS-SPIFFE-MCP",
+      "controls": ["C11", "C12", "C28", "C32", "C35"]
+    },
+    {
+      "unique-id": "rel-mcp-gateway-to-guardrails",
+      "description": "MCP Gateway validates tool parameters, domain scope, and effective authorization via MCP Guardrails.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "mcp-gateway" },
+          "destination": { "node": "mcp-guardrails" }
+        }
+      },
+      "protocol": "Internal-mTLS",
+      "controls": ["C8", "C13", "C19", "C28", "C32", "C35"]
+    },
+    {
+      "unique-id": "rel-mcp-guardrails-to-registry",
+      "description": "MCP Guardrails resolve signed, namespaced tool definitions in the MCP Server Registry.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "mcp-guardrails" },
+          "destination": { "node": "mcp-server-registry" }
+        }
+      },
+      "protocol": "mTLS",
+      "controls": ["C8", "C9", "C10", "C13", "C31"]
+    },
+    {
+      "unique-id": "rel-evaluation-to-runtime",
+      "description": "Evaluation Layer (Runtime Protection Circuit Breakers, Human Supervision Gate, and Feedback Engine) monitors and intervenes on the Unified Agent Runtime.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "runtime-protection-circuit-breaker" },
+          "destination": { "node": "unified-agent-runtime" }
+        }
+      },
+      "protocol": "mTLS",
+      "controls": ["C3", "C5", "C9", "C15", "C21", "C22", "C26", "C27"]
+    },
+    {
+      "unique-id": "rel-human-supervision-to-runtime",
+      "description": "Human Supervision Gate enforces non-bypassable approval checkpoints on high-risk actions and regulatory outputs.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "human-supervision-gate" },
+          "destination": { "node": "unified-agent-runtime" }
+        }
+      },
+      "protocol": "mTLS",
+      "controls": ["C3", "C9", "C26"]
+    },
+    {
+      "unique-id": "rel-feedback-to-adaptive-learning",
+      "description": "Feedback Engine provides multi-source weighted evaluation signals to Adaptive Learning.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "feedback-engine" },
+          "destination": { "node": "adaptive-learning-component" }
+        }
+      },
+      "protocol": "mTLS",
+      "controls": ["C5", "C9", "C15", "C27"]
+    },
+    {
+      "unique-id": "rel-all-layers-to-observability",
+      "description": "All architectural layers emit cryptographically signed logs, trace spans, metrics, events, and IETF SCITT (RFC 9162) decision receipts (MI-21) to the Observability Layer.",
+      "relationship-type": {
+        "connects": {
+          "source": { "node": "unified-agent-runtime" },
+          "destination": { "node": "observability-telemetry-hub" }
+        }
+      },
+      "protocol": "mTLS-WORM-SCITT",
+      "controls": ["C5", "C9", "C15", "C20", "C21"]
+    }
+  ],
+  "controls": {
+    "C1": { "description": "Implement input validation libraries and custom rules at the application layer" },
+    "C2": { "description": "Use a specialised AI security tool, integrated as part of a gateway (Agent, MCP, or LLM) or as a standalone firewall, to inspect, validate, and sanitise prompts and responses for content-based threats" },
+    "C3": { "description": "Design workflows to require human approval for high-risk actions" },
+    "C4": { "description": "Integrate with an enterprise Identity Provider (IDP) enforcing Multi-Factor Authentication (MFA)" },
+    "C5": { "description": "Feed user activity and agent logs into a security analytics platform (SIEM) for behavioural analytics and anomaly detection" },
+    "C6": { "description": "Configure rate limiting and throttling on API endpoints" },
+    "C7": { "description": "Deploy a Web Application Firewall (WAF) with rulesets to block common attack vectors" },
+    "C8": { "description": "Use a Policy-as-Code engine to enforce Attribute-Based Access Control (ABAC) policies for write access" },
+    "C9": { "description": "Log all critical changes to a centralised, write-once, read-many (WORM) system" },
+    "C10": { "description": "Implement automated configuration scanning to detect unauthorised changes" },
+    "C11": { "description": "Use platform-native network policies (Kubernetes network policies, security groups) to enforce micro-segmentation" },
+    "C12": { "description": "Enforce mutual TLS (mTLS) for all connections using strong, verifiable workload identities (SPIFFE SVIDs)" },
+    "C13": { "description": "Manage and version-control all security policies (authorisation, content, behaviour) as code in a version control system" },
+    "C14": { "description": "Use sandboxing or containerisation technologies to isolate agent processes and tool execution" },
+    "C15": { "description": "Implement runtime monitoring to detect and alert on anomalous agent behaviour or goal deviation" },
+    "C16": { "description": "Ensure child agents are created with a scoped, delegated workload identity and a subset of the parent agent's permissions" },
+    "C17": { "description": "Grant just-in-time, task-scoped permissions for tool execution" },
+    "C18": { "description": "Implement automated data validation and sanitisation pipelines for knowledge sources" },
+    "C19": { "description": "Integrate with Data Loss Prevention (DLP) solutions to scan agent outputs for sensitive data" },
+    "C20": { "description": "Ensure logs contain full cryptographic workload identity and rich contextual details for forensic investigation" },
+    "C21": { "description": "Implement automated response playbooks (SOAR) for high-confidence alerts" },
+    "C22": { "description": "Implement resource quotas and limits (CPU, memory, execution time) within the agent runtime environment" },
+    "C23": { "description": "Sanitise all agent-generated output to remove or neutralise malicious code before it is displayed to users or passed to other systems" },
+    "C24": { "description": "Encrypt sensitive data, including models, both at rest and in transit" },
+    "C25": { "description": "Implement a strict vetting and scanning process for all new models and components before they are registered in the platform" },
+    "C26": { "description": "Enforce strict, non-bypassable workflows for tasks that require human supervision" },
+    "C27": { "description": "Implement a multi-source feedback engine that aggregates and weights signals from diverse sources to generate a trusted score for agent interactions" },
+    "C28": { "description": "Implement network egress filtering to restrict agent outbound connections to an approved destination allowlist" },
+    "C29": { "description": "Use a dedicated secrets management platform for all credentials, API keys, and certificates; never inject secrets as environment variables accessible to the agent process" },
+    "C30": { "description": "Enforce cryptographic signing and integrity verification for all registered models; validate signatures at load time and reject any model whose signature cannot be verified" },
+    "C31": { "description": "Maintain a Software Bill of Materials (SBOM) for all agent components, dependencies, and models; integrate SBOM generation and vulnerability scanning into the CI/CD pipeline" },
+    "C32": { "description": "Enforce data minimisation at the agent runtime layer; pass only the data fields required for each tool call and strip all fields not needed for the immediate task before dispatch" },
+    "C33": { "description": "Apply RAG-specific validation; validate and sanitise retrieved documents before injection into the agent context window and monitor retrieval patterns for anomalous query distributions" },
+    "C34": { "description": "Enforce strict cross-session isolation in long-term memory; cryptographically bind all memory entries to the originating user and session identity" },
+    "C35": { "description": "Enforce strict parameter schema validation for all MCP tool calls; reject any call where parameters contain data from domains not authorised for that tool" },
+    "C36": { "description": "Require signed Agent Card verification for all agent-to-agent calls; reject connections from agents presenting unverifiable, expired, or revoked identities; use a short-lived credential rotation policy" },
+    "FINOS-PREV-018-001": {
+      "description": "AIGF MI-18: Commitment-time mandate scope, value ceiling, and freshness verification with hold-and-reconcile on uncertain prior outcomes",
+      "requirement-url": "./controls/requirements/FINOS-PREV-018-001.requirement.json",
+      "config-url": "./controls/configurations/FINOS-PREV-018-001.json"
+    },
+    "FINOS-PREV-018-002": {
+      "description": "AIGF MI-18: Two-phase atomic shared-limit reservation, strict-subset delegation attenuation, and cross-institution mandate verification",
+      "requirement-url": "./controls/requirements/FINOS-PREV-018-002.requirement.json",
+      "config-url": "./controls/configurations/FINOS-PREV-018-002.json"
+    },
+    "FINOS-PREV-019-001": {
+      "description": "AIGF MI-19: Pre-execution tool authorization boundary enforcing min(user,agent) effective permissions",
+      "requirement-url": "./controls/requirements/FINOS-PREV-019-001.requirement.json",
+      "config-url": "./controls/configurations/FINOS-PREV-019-001.json"
+    },
+    "FINOS-DET-020-001": {
+      "description": "AIGF MI-20: Deterministic runtime and collective multi-agent systemic exposure circuit breakers (ST-01..ST-05) with dual-control reset",
+      "requirement-url": "./controls/requirements/FINOS-DET-020-001.requirement.json",
+      "config-url": "./controls/configurations/FINOS-DET-020-001.json"
+    },
+    "FINOS-AUD-021-001": {
+      "description": "AIGF MI-21: Independently verifiable COSE_Sign1 and IETF SCITT (RFC 9162) cryptographic decision audit receipts",
+      "requirement-url": "./controls/requirements/FINOS-AUD-021-001.requirement.json",
+      "config-url": "./controls/configurations/FINOS-AUD-021-001.json"
+    }
+  },
+  "threat-mappings": [
+    { "threat-id": "T-UIL-01", "name": "Malicious User Input", "layer": "User Interaction Layer", "controls": ["C1", "C2", "C3"] },
+    { "threat-id": "T-UIL-02", "name": "User Impersonation", "layer": "User Interaction Layer", "controls": ["C4", "C5"] },
+    { "threat-id": "T-UIL-03", "name": "Application Session Hijacking", "layer": "User Interaction Layer", "controls": ["C4", "C5", "C9"] },
+    { "threat-id": "T-UIL-04", "name": "Denial of Service", "layer": "User Interaction Layer", "controls": ["C6", "C7"] },
+    { "threat-id": "T-UIL-05", "name": "Insecure Output Handling", "layer": "User Interaction Layer", "controls": ["C19", "C23"] },
+    { "threat-id": "T-UIL-06", "name": "HITL Workflow Manipulation", "layer": "User Interaction Layer", "controls": ["C3", "C9", "C26"] },
+    { "threat-id": "T-AGL-01", "name": "Agent Registry Poisoning", "layer": "Agent Gateway Layer", "controls": ["C8", "C9", "C10"] },
+    { "threat-id": "T-AGL-02", "name": "Gateway Bypass", "layer": "Agent Gateway Layer", "controls": ["C11", "C12"] },
+    { "threat-id": "T-AGL-03", "name": "Guardrail and Policy Evasion", "layer": "Agent Gateway Layer", "controls": ["C5", "C13"] },
+    { "threat-id": "T-AGL-04", "name": "Agent Identity Spoofing at Gateway", "layer": "Agent Gateway Layer", "controls": ["C12", "C36"] },
+    { "threat-id": "T-AL-01", "name": "Supervisor Agent Compromise", "layer": "Agent Layer", "controls": ["C11", "C14", "C16"], "aigf-controls": ["FINOS-PREV-018-002"] },
+    { "threat-id": "T-AL-02", "name": "Goal Manipulation via Skill Routing", "layer": "Agent Layer", "controls": ["C8", "C10", "C15"] },
+    { "threat-id": "T-AL-03", "name": "Agent-as-a-Tool Abuse", "layer": "Agent Layer", "controls": ["C9", "C16", "C36"], "aigf-controls": ["FINOS-PREV-018-002", "FINOS-PREV-019-001"] },
+    { "threat-id": "T-AL-04", "name": "Agent Collusion", "layer": "Agent Layer", "controls": ["C5", "C9", "C16"], "aigf-controls": ["FINOS-PREV-018-002", "FINOS-DET-020-001"] },
+    { "threat-id": "T-AL-05", "name": "Goal Manipulation", "layer": "Agent Layer", "controls": ["C1", "C14", "C15"] },
+    { "threat-id": "T-AL-06", "name": "Indirect Prompt Injection", "layer": "Agent Layer", "controls": ["C2", "C14", "C33"] },
+    { "threat-id": "T-AL-07", "name": "Multi-Hop Prompt Injection", "layer": "Agent Layer", "controls": ["C2", "C14", "C16", "C36"] },
+    { "threat-id": "T-AL-08", "name": "Excessive Agency and Scope Expansion", "layer": "Agent Layer", "controls": ["C3", "C15", "C26"], "aigf-controls": ["FINOS-PREV-018-001", "FINOS-PREV-019-001", "FINOS-DET-020-001"] },
+    { "threat-id": "T-AL-09", "name": "Agent Resource Exhaustion", "layer": "Agent Layer", "controls": ["C15", "C22"], "aigf-controls": ["FINOS-DET-020-001"] },
+    { "threat-id": "T-AL-10", "name": "Secrets Exfiltration from Agent Runtime", "layer": "Agent Layer", "controls": ["C14", "C28", "C29"] },
+    { "threat-id": "T-AL-11", "name": "Adaptive Learning Poisoning", "layer": "Agent Layer", "controls": ["C9", "C15", "C27"] },
+    { "threat-id": "T-AL-12", "name": "Workspace File System Abuse", "layer": "Agent Layer", "controls": ["C8", "C9", "C14", "C19"] },
+    { "threat-id": "T-AL-13", "name": "State Hijacking via Pause and Resume", "layer": "Agent Layer", "controls": ["C9", "C12", "C20"], "aigf-controls": ["FINOS-PREV-018-001"] },
+    { "threat-id": "T-AL-14", "name": "Inter-Agent Compromise via Shared State", "layer": "Agent Layer", "controls": ["C5", "C11", "C14"] },
+    { "threat-id": "T-AL-15", "name": "Shell Tool Abuse", "layer": "Agent Layer", "controls": ["C1", "C14", "C17"], "aigf-controls": ["FINOS-PREV-019-001"] },
+    { "threat-id": "T-AL-16", "name": "I/O Tool Abuse", "layer": "Agent Layer", "controls": ["C8", "C9", "C14"], "aigf-controls": ["FINOS-PREV-019-001"] },
+    { "threat-id": "T-AL-17", "name": "Web Search Tool Manipulation", "layer": "Agent Layer", "controls": ["C2", "C28", "C33"] },
+    { "threat-id": "T-AL-18", "name": "MCP Client Misuse", "layer": "Agent Layer", "controls": ["C28", "C32", "C35"], "aigf-controls": ["FINOS-PREV-019-001"] },
+    { "threat-id": "T-AL-19", "name": "Context Window Poisoning", "layer": "Agent Layer", "controls": ["C2", "C14", "C33"] },
+    { "threat-id": "T-AL-20", "name": "Long-Term Memory Poisoning", "layer": "Agent Layer", "controls": ["C9", "C18", "C34"] },
+    { "threat-id": "T-AL-21", "name": "Cross-Session Memory Leakage", "layer": "Agent Layer", "controls": ["C8", "C24", "C34"] },
+    { "threat-id": "T-KL-01", "name": "Data Poisoning", "layer": "Knowledge Layer", "controls": ["C8", "C18"] },
+    { "threat-id": "T-KL-02", "name": "RAG Retrieval Manipulation", "layer": "Knowledge Layer", "controls": ["C15", "C33"] },
+    { "threat-id": "T-KL-03", "name": "Data Leakage from Knowledge Layer", "layer": "Knowledge Layer", "controls": ["C8", "C19", "C24"] },
+    { "threat-id": "T-KL-04", "name": "Embedding Inversion Attack", "layer": "Knowledge Layer", "controls": ["C8", "C24"] },
+    { "threat-id": "T-LLM-01", "name": "Malicious Model Registration", "layer": "LLM Layer", "controls": ["C10", "C25", "C30"] },
+    { "threat-id": "T-LLM-02", "name": "Model Theft", "layer": "LLM Layer", "controls": ["C5", "C8", "C24"] },
+    { "threat-id": "T-LLM-03", "name": "Prompt Injection at LLM Inference", "layer": "LLM Layer", "controls": ["C2"] },
+    { "threat-id": "T-LLM-04", "name": "System Prompt Leakage", "layer": "LLM Layer", "controls": ["C2", "C13", "C29"] },
+    { "threat-id": "T-LLM-05", "name": "LLM Gateway Guardrail Bypass", "layer": "LLM Layer", "controls": ["C5", "C13", "C21"] },
+    { "threat-id": "T-MCP-01", "name": "MCP Registry Poisoning", "layer": "MCP Layer", "controls": ["C8", "C9", "C10"] },
+    { "threat-id": "T-MCP-02", "name": "Compromised MCP Server", "layer": "MCP Layer", "controls": ["C10", "C11", "C12", "C24"] },
+    { "threat-id": "T-MCP-03", "name": "MCP Gateway Bypass", "layer": "MCP Layer", "controls": ["C11", "C12"] },
+    { "threat-id": "T-MCP-04", "name": "Tool Name Shadowing", "layer": "MCP Layer", "controls": ["C8", "C9", "C10"] },
+    { "threat-id": "T-MCP-05", "name": "Data Exfiltration via Tool Parameters", "layer": "MCP Layer", "controls": ["C19", "C28", "C32", "C35"], "aigf-controls": ["FINOS-PREV-019-001"] },
+    { "threat-id": "T-MCP-06", "name": "MCP Capability Escalation", "layer": "MCP Layer", "controls": ["C8", "C10", "C13"], "aigf-controls": ["FINOS-PREV-019-001"] },
+    { "threat-id": "T-EVL-01", "name": "Feedback Manipulation", "layer": "Evaluation Layer", "controls": ["C5", "C27"] },
+    { "threat-id": "T-EVL-02", "name": "Bypassing Human Supervision", "layer": "Evaluation Layer", "controls": ["C9", "C26"], "aigf-controls": ["FINOS-AUD-021-001"] },
+    { "threat-id": "T-EVL-03", "name": "Runtime Protection Evasion", "layer": "Evaluation Layer", "controls": ["C5", "C15", "C21"], "aigf-controls": ["FINOS-DET-020-001"] },
+    { "threat-id": "T-OBL-01", "name": "Log Tampering", "layer": "Observability Layer", "controls": ["C9", "C20"], "aigf-controls": ["FINOS-AUD-021-001"] },
+    { "threat-id": "T-OBL-02", "name": "Log Injection", "layer": "Observability Layer", "controls": ["C9", "C20"], "aigf-controls": ["FINOS-AUD-021-001"] },
+    { "threat-id": "T-OBL-03", "name": "Alert Fatigue", "layer": "Observability Layer", "controls": ["C21"] },
+    { "threat-id": "T-OBL-04", "name": "Trace Poisoning", "layer": "Observability Layer", "controls": ["C9", "C20"], "aigf-controls": ["FINOS-AUD-021-001"] },
+    { "threat-id": "T-OBL-05", "name": "Anomaly Detection Evasion", "layer": "Observability Layer", "controls": ["C5", "C15", "C21"], "aigf-controls": ["FINOS-DET-020-001"] },
+    { "threat-id": "T-XL-01", "name": "MNPI Leakage Across Agent Boundaries", "layer": "Cross-Layer and FSI-Specific Threats", "controls": ["C8", "C16", "C19", "C32"], "aigf-controls": ["FINOS-PREV-018-002"] },
+    { "threat-id": "T-XL-02", "name": "Regulatory Reporting Manipulation", "layer": "Cross-Layer and FSI-Specific Threats", "controls": ["C3", "C9", "C26"], "aigf-controls": ["FINOS-AUD-021-001"] },
+    { "threat-id": "T-XL-03", "name": "Supply Chain Compromise", "layer": "Cross-Layer and FSI-Specific Threats", "controls": ["C25", "C30", "C31"] },
+    { "threat-id": "T-XL-04", "name": "Cascade Failure Propagation", "layer": "Cross-Layer and FSI-Specific Threats", "controls": ["C15", "C21", "C22"], "aigf-controls": ["FINOS-DET-020-001"] }
+  ]
+}
