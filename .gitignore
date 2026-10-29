@@ -17,6 +17,9 @@ website/.docusaurus
 .env.production.local
 .venv
 
+# Structurizr local's working folder (search index, logs, thumbnails), created in each workspace folder
+.structurizr/
+
 website/npm-debug.log*
 website/yarn-debug.log*
 website/yarn-error.log*

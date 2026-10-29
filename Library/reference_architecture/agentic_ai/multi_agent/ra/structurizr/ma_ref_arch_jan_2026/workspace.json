@@ -1,0 +1,1541 @@
+{
+  "configuration" : { },
+  "description" : "FINOS AI Reference Architecture Library, Jan 2026",
+  "documentation" : { },
+  "id" : 1,
+  "lastModifiedDate" : "2026-10-29T02:05:59Z",
+  "model" : {
+    "people" : [ {
+      "description" : "Employee, customer, analyst or automated process.",
+      "id" : "1",
+      "name" : "User",
+      "properties" : {
+        "structurizr.dsl.identifier" : "user"
+      },
+      "relationships" : [ {
+        "description" : "Goals, inputs; reviews and approves outputs",
+        "destinationId" : "3",
+        "id" : "41",
+        "sourceId" : "1",
+        "tags" : "Relationship"
+      }, {
+        "description" : "Goals, inputs; reviews and approves outputs",
+        "destinationId" : "2",
+        "id" : "42",
+        "linkedRelationshipId" : "41",
+        "sourceId" : "1"
+      } ],
+      "tags" : "Element,Person"
+    } ],
+    "properties" : {
+      "structurizr.groupSeparator" : "/"
+    },
+    "softwareSystems" : [ {
+      "containers" : [ {
+        "description" : "Web, mobile, chatbot or workflow surface. Forwards user input to agents and returns responses; human-in-the-loop review.",
+        "documentation" : { },
+        "group" : "User Interaction Layer",
+        "id" : "3",
+        "name" : "Application",
+        "perspectives" : [ {
+          "description" : "Prompt Injection",
+          "name" : "RI-10"
+        }, {
+          "description" : "Model Overreach / Expanded Use",
+          "name" : "RI-18"
+        }, {
+          "description" : "Reputational Risk",
+          "name" : "RI-20"
+        }, {
+          "description" : "Human Approval Fatigue and Consent Gate Degradation",
+          "name" : "RI-31"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "application",
+          "risks" : "RI-10, RI-18, RI-20, RI-31"
+        },
+        "relationships" : [ {
+          "description" : "Agent requests",
+          "destinationId" : "5",
+          "id" : "43",
+          "sourceId" : "3",
+          "tags" : "Relationship"
+        }, {
+          "destinationId" : "32",
+          "id" : "74",
+          "properties" : {
+            "signals" : "Interaction logs, session events"
+          },
+          "sourceId" : "3",
+          "tags" : "Relationship,Telemetry"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Catalog of agents, capabilities, metadata and configuration; versioning and controlled onboarding.",
+        "documentation" : { },
+        "group" : "Agent Gateway Layer",
+        "id" : "4",
+        "name" : "Agent Registry",
+        "perspectives" : [ {
+          "description" : "Model Overreach / Expanded Use",
+          "name" : "RI-18"
+        }, {
+          "description" : "Multi-Agent Trust Boundary Violations",
+          "name" : "RI-28"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "agentRegistry",
+          "risks" : "RI-18, RI-28"
+        },
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Validates requests and routes each one to the correct agent or agent group.",
+        "documentation" : { },
+        "group" : "Agent Gateway Layer",
+        "id" : "5",
+        "name" : "Gateway",
+        "perspectives" : [ {
+          "description" : "Agent Action Authorization Bypass",
+          "name" : "RI-24"
+        }, {
+          "description" : "Multi-Agent Trust Boundary Violations",
+          "name" : "RI-28"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "agentGateway",
+          "risks" : "RI-24, RI-28"
+        },
+        "relationships" : [ {
+          "description" : "Resolves target agents",
+          "destinationId" : "4",
+          "id" : "44",
+          "sourceId" : "5",
+          "tags" : "Relationship"
+        }, {
+          "description" : "AuthN / AuthZ, input validation",
+          "destinationId" : "6",
+          "id" : "45",
+          "sourceId" : "5",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Routes validated requests",
+          "destinationId" : "8",
+          "id" : "46",
+          "sourceId" : "5",
+          "tags" : "Relationship"
+        }, {
+          "destinationId" : "35",
+          "id" : "75",
+          "properties" : {
+            "signals" : "Routing, policy, access signals"
+          },
+          "sourceId" : "5",
+          "tags" : "Relationship,Telemetry"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Zero trust, AuthN / AuthZ, input validation, content filtering, rate limits, dynamic policy.",
+        "documentation" : { },
+        "group" : "Agent Gateway Layer",
+        "id" : "6",
+        "name" : "Agent Guardrails / Policies",
+        "perspectives" : [ {
+          "description" : "Prompt Injection",
+          "name" : "RI-10"
+        }, {
+          "description" : "Regulatory Compliance and Oversight",
+          "name" : "RI-22"
+        }, {
+          "description" : "Agent Action Authorization Bypass",
+          "name" : "RI-24"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "agentGuardrails",
+          "risks" : "RI-10, RI-22, RI-24"
+        },
+        "tags" : "Element,Container,Guardrails",
+        "technology" : "ZeroTrust, AuthN, AuthZ"
+      }, {
+        "description" : "Supervisor decomposes the task and orchestrates specialised worker agents.",
+        "documentation" : { },
+        "group" : "Agent Layer/Agent Collaboration Patterns",
+        "id" : "7",
+        "name" : "Supervisor / Worker",
+        "perspectives" : [ {
+          "description" : "Lack of Explainability",
+          "name" : "RI-17"
+        }, {
+          "description" : "Multi-Agent Trust Boundary Violations",
+          "name" : "RI-28"
+        }, {
+          "description" : "Hallucination and Inaccurate Outputs",
+          "name" : "RI-4"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "supervisorWorker",
+          "risks" : "RI-4, RI-17, RI-28"
+        },
+        "relationships" : [ {
+          "description" : "Delegates work via",
+          "destinationId" : "12",
+          "id" : "47",
+          "sourceId" : "7",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Pattern"
+      }, {
+        "description" : "Request routed to an available agent that has the required skill.",
+        "documentation" : { },
+        "group" : "Agent Layer/Agent Collaboration Patterns",
+        "id" : "8",
+        "name" : "Skill Based Routing",
+        "perspectives" : [ {
+          "description" : "Model Overreach / Expanded Use",
+          "name" : "RI-18"
+        }, {
+          "description" : "Multi-Agent Trust Boundary Violations",
+          "name" : "RI-28"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "skillRouting",
+          "risks" : "RI-18, RI-28"
+        },
+        "tags" : "Element,Container,Pattern"
+      }, {
+        "description" : "One agent invokes another as a tool, enabling handoff to specialists.",
+        "documentation" : { },
+        "group" : "Agent Layer/Agent Collaboration Patterns",
+        "id" : "9",
+        "name" : "Agent as a Tool",
+        "perspectives" : [ {
+          "description" : "Agent Action Authorization Bypass",
+          "name" : "RI-24"
+        }, {
+          "description" : "Tool Chain Manipulation and Injection",
+          "name" : "RI-25"
+        }, {
+          "description" : "Multi-Agent Trust Boundary Violations",
+          "name" : "RI-28"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "agentAsTool",
+          "risks" : "RI-24, RI-25, RI-28"
+        },
+        "relationships" : [ {
+          "description" : "Invokes agents as tools via",
+          "destinationId" : "11",
+          "id" : "48",
+          "sourceId" : "9",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Pattern"
+      }, {
+        "description" : "Complete task state enabling pause, resume and handoff.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime",
+        "id" : "10",
+        "name" : "State Management",
+        "perspectives" : [ {
+          "description" : "Agent State Persistence Poisoning",
+          "name" : "RI-27"
+        }, {
+          "description" : "Multi-Agent Trust Boundary Violations",
+          "name" : "RI-28"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "stateMgmt",
+          "risks" : "RI-27, RI-28"
+        },
+        "relationships" : [ {
+          "description" : "Persists and restores context",
+          "destinationId" : "20",
+          "id" : "50",
+          "sourceId" : "10",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Intercepts and validates all tool calls; handles execution and credentials inside the sandbox.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime",
+        "id" : "11",
+        "name" : "Secure Execution",
+        "perspectives" : [ {
+          "description" : "Agent Action Authorization Bypass",
+          "name" : "RI-24"
+        }, {
+          "description" : "Tool Chain Manipulation and Injection",
+          "name" : "RI-25"
+        }, {
+          "description" : "Agent-Mediated Credential Discovery and Harvesting",
+          "name" : "RI-29"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "secureExec",
+          "risks" : "RI-24, RI-25, RI-29"
+        },
+        "relationships" : [ {
+          "description" : "Validated tool calls",
+          "destinationId" : "15",
+          "id" : "51",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        }, {
+          "destinationId" : "16",
+          "id" : "52",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        }, {
+          "destinationId" : "17",
+          "id" : "53",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        }, {
+          "destinationId" : "18",
+          "id" : "54",
+          "sourceId" : "11",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Agent actions for checking",
+          "destinationId" : "40",
+          "id" : "66",
+          "sourceId" : "11",
+          "tags" : "Relationship,Oversight"
+        }, {
+          "destinationId" : "33",
+          "id" : "76",
+          "properties" : {
+            "signals" : "Reasoning traces, execution metrics"
+          },
+          "sourceId" : "11",
+          "tags" : "Relationship,Telemetry"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Stateful collaboration between agents through shared memory and state.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime",
+        "id" : "12",
+        "name" : "Collaboration / Handoff",
+        "perspectives" : [ {
+          "description" : "Agent State Persistence Poisoning",
+          "name" : "RI-27"
+        }, {
+          "description" : "Multi-Agent Trust Boundary Violations",
+          "name" : "RI-28"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "collabHandoff",
+          "risks" : "RI-27, RI-28"
+        },
+        "relationships" : [ {
+          "description" : "Shares task state",
+          "destinationId" : "10",
+          "id" : "49",
+          "sourceId" : "12",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Sandboxed, persistent file system for large artifacts.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime",
+        "id" : "13",
+        "name" : "Workspace File System",
+        "perspectives" : [ {
+          "description" : "Information Leaked to Vector Store",
+          "name" : "RI-2"
+        }, {
+          "description" : "Agent State Persistence Poisoning",
+          "name" : "RI-27"
+        }, {
+          "description" : "Agent-Mediated Credential Discovery and Harvesting",
+          "name" : "RI-29"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "workspaceFs",
+          "risks" : "RI-2, RI-27, RI-29"
+        },
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Learning signals from execution outcomes refine prompts, agent configuration and tool selection.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime",
+        "id" : "14",
+        "name" : "Adaptive Learning",
+        "perspectives" : [ {
+          "description" : "Inadequate System Alignment",
+          "name" : "RI-14"
+        }, {
+          "description" : "Agent State Persistence Poisoning",
+          "name" : "RI-27"
+        }, {
+          "description" : "Data Poisoning",
+          "name" : "RI-9"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "adaptiveLearning",
+          "risks" : "RI-9, RI-14, RI-27"
+        },
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Secure bridge to the external MCP Layer.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime/Tools Layer",
+        "id" : "15",
+        "name" : "MCP Client",
+        "perspectives" : [ {
+          "description" : "Tool Chain Manipulation and Injection",
+          "name" : "RI-25"
+        }, {
+          "description" : "MCP Server Supply Chain Compromise",
+          "name" : "RI-26"
+        }, {
+          "description" : "Third-Party Content Loaded as Agent Instructions",
+          "name" : "RI-32"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "mcpClient",
+          "risks" : "RI-25, RI-26, RI-32"
+        },
+        "relationships" : [ {
+          "description" : "MCP connection requests",
+          "destinationId" : "25",
+          "id" : "59",
+          "sourceId" : "15",
+          "tags" : "Relationship",
+          "technology" : "MCP"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Sandboxed shell for basic commands.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime/Tools Layer",
+        "id" : "16",
+        "name" : "Shell Tool",
+        "perspectives" : [ {
+          "description" : "Agent Action Authorization Bypass",
+          "name" : "RI-24"
+        }, {
+          "description" : "Tool Chain Manipulation and Injection",
+          "name" : "RI-25"
+        }, {
+          "description" : "Agent-Mediated Credential Discovery and Harvesting",
+          "name" : "RI-29"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "shellTool",
+          "risks" : "RI-24, RI-25, RI-29"
+        },
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Reads from and writes to the workspace file system.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime/Tools Layer",
+        "id" : "17",
+        "name" : "I/O Tool",
+        "perspectives" : [ {
+          "description" : "Agent State Persistence Poisoning",
+          "name" : "RI-27"
+        }, {
+          "description" : "Agent-Mediated Credential Discovery and Harvesting",
+          "name" : "RI-29"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "ioTool",
+          "risks" : "RI-27, RI-29"
+        },
+        "relationships" : [ {
+          "description" : "Reads and writes files",
+          "destinationId" : "13",
+          "id" : "55",
+          "sourceId" : "17",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Built-in web search.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime/Tools Layer",
+        "id" : "18",
+        "name" : "Web Search Tool",
+        "perspectives" : [ {
+          "description" : "Prompt Injection",
+          "name" : "RI-10"
+        }, {
+          "description" : "Data Quality and Drift",
+          "name" : "RI-19"
+        }, {
+          "description" : "Intellectual Property (IP) and Copyright",
+          "name" : "RI-23"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "webSearchTool",
+          "risks" : "RI-10, RI-19, RI-23"
+        },
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Trimming and summarisation to manage context length, cost and latency.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime/Short-Term Memory",
+        "id" : "19",
+        "name" : "In-Session Context Manager",
+        "perspectives" : [ {
+          "description" : "Prompt Injection",
+          "name" : "RI-10"
+        }, {
+          "description" : "Hallucination and Inaccurate Outputs",
+          "name" : "RI-4"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "contextManager",
+          "risks" : "RI-4, RI-10"
+        },
+        "relationships" : [ {
+          "description" : "Retrieves grounding context",
+          "destinationId" : "23",
+          "id" : "56",
+          "sourceId" : "19",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Queries source data",
+          "destinationId" : "22",
+          "id" : "57",
+          "sourceId" : "19",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Inference requests",
+          "destinationId" : "29",
+          "id" : "58",
+          "sourceId" : "19",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Summaries of past interactions for future reference.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime/Long-Term Memory",
+        "id" : "20",
+        "name" : "Session Summaries",
+        "perspectives" : [ {
+          "description" : "Information Leaked to Vector Store",
+          "name" : "RI-2"
+        }, {
+          "description" : "Agent State Persistence Poisoning",
+          "name" : "RI-27"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "sessionSummaries",
+          "risks" : "RI-2, RI-27"
+        },
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "User preferences and task-specific information across sessions.",
+        "documentation" : { },
+        "group" : "Agent Layer/Unified Agent Runtime/Long-Term Memory",
+        "id" : "21",
+        "name" : "User / Task Personalization",
+        "perspectives" : [ {
+          "description" : "Bias and Discrimination",
+          "name" : "RI-16"
+        }, {
+          "description" : "Information Leaked to Vector Store",
+          "name" : "RI-2"
+        }, {
+          "description" : "Agent State Persistence Poisoning",
+          "name" : "RI-27"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "personalization",
+          "risks" : "RI-2, RI-16, RI-27"
+        },
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Internal and external authoritative repositories (structured, unstructured, graph).",
+        "documentation" : { },
+        "group" : "Knowledge Layer",
+        "id" : "22",
+        "name" : "Source Bases",
+        "perspectives" : [ {
+          "description" : "Prompt Injection",
+          "name" : "RI-10"
+        }, {
+          "description" : "Data Quality and Drift",
+          "name" : "RI-19"
+        }, {
+          "description" : "Intellectual Property (IP) and Copyright",
+          "name" : "RI-23"
+        }, {
+          "description" : "Data Poisoning",
+          "name" : "RI-9"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "sourceBases",
+          "risks" : "RI-9, RI-10, RI-19, RI-23"
+        },
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Vector retrieval for semantic search and grounding.",
+        "documentation" : { },
+        "group" : "Knowledge Layer",
+        "id" : "23",
+        "name" : "Vector DBs",
+        "perspectives" : [ {
+          "description" : "Data Quality and Drift",
+          "name" : "RI-19"
+        }, {
+          "description" : "Information Leaked to Vector Store",
+          "name" : "RI-2"
+        }, {
+          "description" : "Data Poisoning",
+          "name" : "RI-9"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "vectorDbs",
+          "risks" : "RI-2, RI-9, RI-19"
+        },
+        "relationships" : [ {
+          "destinationId" : "34",
+          "id" : "77",
+          "properties" : {
+            "signals" : "Retrieval metrics, search traces"
+          },
+          "sourceId" : "23",
+          "tags" : "Relationship,Telemetry"
+        } ],
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Zero trust, AuthN / AuthZ for every MCP request; tool entitlements, rate limits, parameter validation.",
+        "documentation" : { },
+        "group" : "MCP Layer",
+        "id" : "24",
+        "name" : "MCP Guardrails / Policies",
+        "perspectives" : [ {
+          "description" : "Agent Action Authorization Bypass",
+          "name" : "RI-24"
+        }, {
+          "description" : "Tool Chain Manipulation and Injection",
+          "name" : "RI-25"
+        }, {
+          "description" : "Agent-Mediated Credential Discovery and Harvesting",
+          "name" : "RI-29"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "mcpGuardrails",
+          "risks" : "RI-24, RI-25, RI-29"
+        },
+        "tags" : "Element,Container,Guardrails",
+        "technology" : "ZeroTrust, AuthN, AuthZ"
+      }, {
+        "description" : "Validates MCP connection requests and routes them to the correct server instance.",
+        "documentation" : { },
+        "group" : "MCP Layer",
+        "id" : "25",
+        "name" : "MCP Gateway",
+        "perspectives" : [ {
+          "description" : "Agent Action Authorization Bypass",
+          "name" : "RI-24"
+        }, {
+          "description" : "Tool Chain Manipulation and Injection",
+          "name" : "RI-25"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "mcpGateway",
+          "risks" : "RI-24, RI-25"
+        },
+        "relationships" : [ {
+          "description" : "AuthN / AuthZ, parameter validation",
+          "destinationId" : "24",
+          "id" : "60",
+          "sourceId" : "25",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Looks up approved servers",
+          "destinationId" : "26",
+          "id" : "61",
+          "sourceId" : "25",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Routed MCP calls",
+          "destinationId" : "27",
+          "id" : "62",
+          "sourceId" : "25",
+          "tags" : "Relationship",
+          "technology" : "MCP"
+        }, {
+          "destinationId" : "35",
+          "id" : "78",
+          "properties" : {
+            "signals" : "Routing, policy, access signals"
+          },
+          "sourceId" : "25",
+          "tags" : "Relationship,Telemetry"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Catalog of approved MCP servers; controlled onboarding.",
+        "documentation" : { },
+        "group" : "MCP Layer",
+        "id" : "26",
+        "name" : "MCP Registry",
+        "perspectives" : [ {
+          "description" : "MCP Server Supply Chain Compromise",
+          "name" : "RI-26"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "mcpRegistry",
+          "risks" : "RI-26"
+        },
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Approved enterprise and third-party MCP servers.",
+        "documentation" : { },
+        "group" : "MCP Layer",
+        "id" : "27",
+        "name" : "MCP Zoo",
+        "perspectives" : [ {
+          "description" : "Information Leaked To Hosted Model",
+          "name" : "RI-1"
+        }, {
+          "description" : "MCP Server Supply Chain Compromise",
+          "name" : "RI-26"
+        }, {
+          "description" : "Agent-Mediated Credential Discovery and Harvesting",
+          "name" : "RI-29"
+        }, {
+          "description" : "Third-Party Content Loaded as Agent Instructions",
+          "name" : "RI-32"
+        }, {
+          "description" : "Availability of Foundational Model",
+          "name" : "RI-7"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "mcpZoo",
+          "risks" : "RI-1, RI-7, RI-26, RI-29, RI-32"
+        },
+        "tags" : "Element,Container,External"
+      }, {
+        "description" : "Zero trust, AuthN / AuthZ for every inference; prompt-injection checks, output filtering, cost limits.",
+        "documentation" : { },
+        "group" : "LLM Layer",
+        "id" : "28",
+        "name" : "LLM Guardrails / Policies",
+        "perspectives" : [ {
+          "description" : "Information Leaked To Hosted Model",
+          "name" : "RI-1"
+        }, {
+          "description" : "Prompt Injection",
+          "name" : "RI-10"
+        }, {
+          "description" : "Availability of Foundational Model",
+          "name" : "RI-7"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "llmGuardrails",
+          "risks" : "RI-1, RI-7, RI-10"
+        },
+        "tags" : "Element,Container,Guardrails",
+        "technology" : "ZeroTrust, AuthN, AuthZ"
+      }, {
+        "description" : "Routes inference requests to the correct model instance.",
+        "documentation" : { },
+        "group" : "LLM Layer",
+        "id" : "29",
+        "name" : "LLM Gateway",
+        "perspectives" : [ {
+          "description" : "Information Leaked To Hosted Model",
+          "name" : "RI-1"
+        }, {
+          "description" : "Availability of Foundational Model",
+          "name" : "RI-7"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "llmGateway",
+          "risks" : "RI-1, RI-7"
+        },
+        "relationships" : [ {
+          "description" : "AuthN / AuthZ, input / output filtering",
+          "destinationId" : "28",
+          "id" : "63",
+          "sourceId" : "29",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Looks up approved models",
+          "destinationId" : "30",
+          "id" : "64",
+          "sourceId" : "29",
+          "tags" : "Relationship"
+        }, {
+          "description" : "Routed inference requests",
+          "destinationId" : "31",
+          "id" : "65",
+          "sourceId" : "29",
+          "tags" : "Relationship"
+        }, {
+          "destinationId" : "34",
+          "id" : "79",
+          "properties" : {
+            "signals" : "Model usage, routing signals"
+          },
+          "sourceId" : "29",
+          "tags" : "Relationship,Telemetry"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Catalog of approved models; versions, constraints, controlled onboarding.",
+        "documentation" : { },
+        "group" : "LLM Layer",
+        "id" : "30",
+        "name" : "Model Registry",
+        "perspectives" : [ {
+          "description" : "Foundation Model Versioning",
+          "name" : "RI-5"
+        }, {
+          "description" : "Tampering With the Foundational Model",
+          "name" : "RI-8"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "modelRegistry",
+          "risks" : "RI-5, RI-8"
+        },
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Approved hosted and vendor foundation models.",
+        "documentation" : { },
+        "group" : "LLM Layer",
+        "id" : "31",
+        "name" : "LLM Zoo",
+        "perspectives" : [ {
+          "description" : "Information Leaked To Hosted Model",
+          "name" : "RI-1"
+        }, {
+          "description" : "Bias and Discrimination",
+          "name" : "RI-16"
+        }, {
+          "description" : "Lack of Explainability",
+          "name" : "RI-17"
+        }, {
+          "description" : "Intellectual Property (IP) and Copyright",
+          "name" : "RI-23"
+        }, {
+          "description" : "Hallucination and Inaccurate Outputs",
+          "name" : "RI-4"
+        }, {
+          "description" : "Foundation Model Versioning",
+          "name" : "RI-5"
+        }, {
+          "description" : "Non-Deterministic Behaviour",
+          "name" : "RI-6"
+        }, {
+          "description" : "Tampering With the Foundational Model",
+          "name" : "RI-8"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "llmZoo",
+          "risks" : "RI-1, RI-4, RI-5, RI-6, RI-8, RI-16, RI-17, RI-23"
+        },
+        "tags" : "Element,Container,External,Database"
+      }, {
+        "description" : "Structured and unstructured logs from all layers.",
+        "documentation" : { },
+        "group" : "Observability Layer",
+        "id" : "32",
+        "name" : "Logs",
+        "perspectives" : [ {
+          "description" : "Information Leaked to Vector Store",
+          "name" : "RI-2"
+        }, {
+          "description" : "Regulatory Compliance and Oversight",
+          "name" : "RI-22"
+        }, {
+          "description" : "Agent-Mediated Credential Discovery and Harvesting",
+          "name" : "RI-29"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "logs",
+          "risks" : "RI-2, RI-22, RI-29"
+        },
+        "relationships" : [ {
+          "destinationId" : "37",
+          "id" : "70",
+          "sourceId" : "32",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Distributed tracing across the request lifecycle.",
+        "documentation" : { },
+        "group" : "Observability Layer",
+        "id" : "33",
+        "name" : "Traces",
+        "perspectives" : [ {
+          "description" : "Lack of Explainability",
+          "name" : "RI-17"
+        }, {
+          "description" : "Information Leaked to Vector Store",
+          "name" : "RI-2"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "traces",
+          "risks" : "RI-2, RI-17"
+        },
+        "relationships" : [ {
+          "destinationId" : "37",
+          "id" : "71",
+          "sourceId" : "33",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Latency, throughput, errors, model usage, resource use.",
+        "documentation" : { },
+        "group" : "Observability Layer",
+        "id" : "34",
+        "name" : "Metrics",
+        "perspectives" : [ {
+          "description" : "Availability of Foundational Model",
+          "name" : "RI-7"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "metrics",
+          "risks" : "RI-7"
+        },
+        "relationships" : [ {
+          "destinationId" : "36",
+          "id" : "72",
+          "sourceId" : "34",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Policy violations, model selection, escalations, evaluation outcomes.",
+        "documentation" : { },
+        "group" : "Observability Layer",
+        "id" : "35",
+        "name" : "Events",
+        "perspectives" : [ {
+          "description" : "Regulatory Compliance and Oversight",
+          "name" : "RI-22"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "events",
+          "risks" : "RI-22"
+        },
+        "relationships" : [ {
+          "destinationId" : "36",
+          "id" : "73",
+          "sourceId" : "35",
+          "tags" : "Relationship"
+        } ],
+        "tags" : "Element,Container,Database"
+      }, {
+        "description" : "Detects failures, regressions, misuse and emerging risks.",
+        "documentation" : { },
+        "group" : "Observability Layer",
+        "id" : "36",
+        "name" : "Anomaly Detection",
+        "perspectives" : [ {
+          "description" : "Data Quality and Drift",
+          "name" : "RI-19"
+        }, {
+          "description" : "Agent State Persistence Poisoning",
+          "name" : "RI-27"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "anomalyDetection",
+          "risks" : "RI-19, RI-27"
+        },
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Correlates signals to connect symptoms to root causes.",
+        "documentation" : { },
+        "group" : "Observability Layer",
+        "id" : "37",
+        "name" : "Correlation Engine",
+        "perspectives" : [ {
+          "description" : "Lack of Explainability",
+          "name" : "RI-17"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "correlationEngine",
+          "risks" : "RI-17"
+        },
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Correctness, preference and quality signals.",
+        "documentation" : { },
+        "group" : "Evaluation Layer",
+        "id" : "38",
+        "name" : "Feedback",
+        "perspectives" : [ {
+          "description" : "Inadequate System Alignment",
+          "name" : "RI-14"
+        }, {
+          "description" : "Bias and Discrimination",
+          "name" : "RI-16"
+        }, {
+          "description" : "Data Poisoning",
+          "name" : "RI-9"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "feedbackEngine",
+          "risks" : "RI-9, RI-14, RI-16"
+        },
+        "relationships" : [ {
+          "description" : "Feedback signals",
+          "destinationId" : "14",
+          "id" : "69",
+          "sourceId" : "38",
+          "tags" : "Relationship,Oversight"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Inspect, approve, correct or override agent outputs.",
+        "documentation" : { },
+        "group" : "Evaluation Layer",
+        "id" : "39",
+        "name" : "Human Supervision",
+        "perspectives" : [ {
+          "description" : "Model Overreach / Expanded Use",
+          "name" : "RI-18"
+        }, {
+          "description" : "Regulatory Compliance and Oversight",
+          "name" : "RI-22"
+        }, {
+          "description" : "Human Approval Fatigue and Consent Gate Degradation",
+          "name" : "RI-31"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "humanSupervision",
+          "risks" : "RI-18, RI-22, RI-31"
+        },
+        "relationships" : [ {
+          "description" : "Approvals and overrides",
+          "destinationId" : "3",
+          "id" : "68",
+          "sourceId" : "39",
+          "tags" : "Relationship,Oversight"
+        } ],
+        "tags" : "Element,Container"
+      }, {
+        "description" : "Detects unsafe or non-compliant behaviour; blocks actions or escalates.",
+        "documentation" : { },
+        "group" : "Evaluation Layer",
+        "id" : "40",
+        "name" : "Runtime Protection",
+        "perspectives" : [ {
+          "description" : "Inadequate System Alignment",
+          "name" : "RI-14"
+        }, {
+          "description" : "Agent Action Authorization Bypass",
+          "name" : "RI-24"
+        }, {
+          "description" : "Tool Chain Manipulation and Injection",
+          "name" : "RI-25"
+        } ],
+        "properties" : {
+          "structurizr.dsl.identifier" : "runtimeProtection",
+          "risks" : "RI-14, RI-24, RI-25"
+        },
+        "relationships" : [ {
+          "description" : "Blocks / escalations",
+          "destinationId" : "11",
+          "id" : "67",
+          "sourceId" : "40",
+          "tags" : "Relationship,Oversight"
+        }, {
+          "destinationId" : "35",
+          "id" : "80",
+          "properties" : {
+            "signals" : "Feedback events, protection signals"
+          },
+          "sourceId" : "40",
+          "tags" : "Relationship,Telemetry"
+        } ],
+        "tags" : "Element,Container"
+      } ],
+      "description" : "Governed, extensible multi-agent system.",
+      "documentation" : { },
+      "id" : "2",
+      "name" : "Multi-Agent Platform",
+      "properties" : {
+        "structurizr.dsl.identifier" : "platform"
+      },
+      "tags" : "Element,Software System"
+    } ]
+  },
+  "name" : "Multi-Agent Reference Architecture",
+  "properties" : {
+    "structurizr.inspection.error" : "93",
+    "structurizr.dsl" : "LyoKICogTXVsdGktQWdlbnQgUmVmZXJlbmNlIEFyY2hpdGVjdHVyZSAoSmFuIDIwMjYpIGFzIGEgU3RydWN0dXJpenIgbW9kZWwuCiAqCiAqIExheWVycyBmcm9tIG1hX3JlZl9hcmNoX2phbl8yMDI2Lm1kIGFyZSBuZXN0ZWQgZ3JvdXBzLiBSaXNrcyBmcm9tIHRoZSBGSU5PUyBBSSBHb3Zlcm5hbmNlCiAqIEZyYW1ld29yayBhcmUgZWxlbWVudCBwcm9wZXJ0aWVzIHBsdXMgb25lIHBlcnNwZWN0aXZlIHBlciByaXNrIElELCBzbyB0aGUgU3RydWN0dXJpenIgVUkgY2FuCiAqIGhpZ2hsaWdodCBldmVyeSBlbGVtZW50IGFmZmVjdGVkIGJ5IGEgY2hvc2VuIHJpc2suIFJJLTMxIGFuZCBSSS0zMiBhcmUgb24gdW5tZXJnZWQgYnJhbmNoZXMKICogb2YgZmlub3MvYWktZ292ZXJuYW5jZS1mcmFtZXdvcmsgYXQgdGhlIHRpbWUgb2Ygd3JpdGluZy4KICoKICogRWxlbWVudCBwb3NpdGlvbnMgZm9yIHRoZSAiT3ZlcnZpZXciIHZpZXcgbGl2ZSBpbiBtYV9yZWZfYXJjaF9qYW5fMjAyNi5qc29uIGFuZCBtaXJyb3IKICogLi4vYXNzZXRzL21hX3JlZl9hcmNoX2phbl8yMDI2LmRyYXdpby4KICovCndvcmtzcGFjZSAiTXVsdGktQWdlbnQgUmVmZXJlbmNlIEFyY2hpdGVjdHVyZSIgIkZJTk9TIEFJIFJlZmVyZW5jZSBBcmNoaXRlY3R1cmUgTGlicmFyeSwgSmFuIDIwMjYiIHsKCiAgICAhaWRlbnRpZmllcnMgZmxhdAoKICAgIG1vZGVsIHsKICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgInN0cnVjdHVyaXpyLmdyb3VwU2VwYXJhdG9yIiAiLyIKICAgICAgICB9CgogICAgICAgIHVzZXIgPSBwZXJzb24gIlVzZXIiICJFbXBsb3llZSwgY3VzdG9tZXIsIGFuYWx5c3Qgb3IgYXV0b21hdGVkIHByb2Nlc3MuIgoKICAgICAgICBwbGF0Zm9ybSA9IHNvZnR3YXJlU3lzdGVtICJNdWx0aS1BZ2VudCBQbGF0Zm9ybSIgIkdvdmVybmVkLCBleHRlbnNpYmxlIG11bHRpLWFnZW50IHN5c3RlbS4iIHsKICAgICAgICAgICAgZ3JvdXAgIlVzZXIgSW50ZXJhY3Rpb24gTGF5ZXIiIHsKICAgICAgICAgICAgICAgIGFwcGxpY2F0aW9uID0gY29udGFpbmVyICJBcHBsaWNhdGlvbiIgIldlYiwgbW9iaWxlLCBjaGF0Ym90IG9yIHdvcmtmbG93IHN1cmZhY2UuIEZvcndhcmRzIHVzZXIgaW5wdXQgdG8gYWdlbnRzIGFuZCByZXR1cm5zIHJlc3BvbnNlczsgaHVtYW4taW4tdGhlLWxvb3AgcmV2aWV3LiIgIiIgewogICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0xMCwgUkktMTgsIFJJLTIwLCBSSS0zMSIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTEwIiAiUHJvbXB0IEluamVjdGlvbiIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTE4IiAiTW9kZWwgT3ZlcnJlYWNoIC8gRXhwYW5kZWQgVXNlIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjAiICJSZXB1dGF0aW9uYWwgUmlzayIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTMxIiAiSHVtYW4gQXBwcm92YWwgRmF0aWd1ZSBhbmQgQ29uc2VudCBHYXRlIERlZ3JhZGF0aW9uIgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgZ3JvdXAgIkFnZW50IEdhdGV3YXkgTGF5ZXIiIHsKICAgICAgICAgICAgICAgIGFnZW50UmVnaXN0cnkgPSBjb250YWluZXIgIkFnZW50IFJlZ2lzdHJ5IiAiQ2F0YWxvZyBvZiBhZ2VudHMsIGNhcGFiaWxpdGllcywgbWV0YWRhdGEgYW5kIGNvbmZpZ3VyYXRpb247IHZlcnNpb25pbmcgYW5kIGNvbnRyb2xsZWQgb25ib2FyZGluZy4iICIiICJEYXRhYmFzZSIgewogICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0xOCwgUkktMjgiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0xOCIgIk1vZGVsIE92ZXJyZWFjaCAvIEV4cGFuZGVkIFVzZSIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI4IiAiTXVsdGktQWdlbnQgVHJ1c3QgQm91bmRhcnkgVmlvbGF0aW9ucyIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBhZ2VudEdhdGV3YXkgPSBjb250YWluZXIgIkdhdGV3YXkiICJWYWxpZGF0ZXMgcmVxdWVzdHMgYW5kIHJvdXRlcyBlYWNoIG9uZSB0byB0aGUgY29ycmVjdCBhZ2VudCBvciBhZ2VudCBncm91cC4iICIiIHsKICAgICAgICAgICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgInJpc2tzIiAiUkktMjQsIFJJLTI4IgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjQiICJBZ2VudCBBY3Rpb24gQXV0aG9yaXphdGlvbiBCeXBhc3MiCiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yOCIgIk11bHRpLUFnZW50IFRydXN0IEJvdW5kYXJ5IFZpb2xhdGlvbnMiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgYWdlbnRHdWFyZHJhaWxzID0gY29udGFpbmVyICJBZ2VudCBHdWFyZHJhaWxzIC8gUG9saWNpZXMiICJaZXJvIHRydXN0LCBBdXRoTiAvIEF1dGhaLCBpbnB1dCB2YWxpZGF0aW9uLCBjb250ZW50IGZpbHRlcmluZywgcmF0ZSBsaW1pdHMsIGR5bmFtaWMgcG9saWN5LiIgIlplcm9UcnVzdCwgQXV0aE4sIEF1dGhaIiAiR3VhcmRyYWlscyIgewogICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0xMCwgUkktMjIsIFJJLTI0IgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAiUkktMTAiICJQcm9tcHQgSW5qZWN0aW9uIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjIiICJSZWd1bGF0b3J5IENvbXBsaWFuY2UgYW5kIE92ZXJzaWdodCIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI0IiAiQWdlbnQgQWN0aW9uIEF1dGhvcml6YXRpb24gQnlwYXNzIgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgZ3JvdXAgIkFnZW50IExheWVyIiB7CiAgICAgICAgICAgICAgICBncm91cCAiQWdlbnQgQ29sbGFib3JhdGlvbiBQYXR0ZXJucyIgewogICAgICAgICAgICAgICAgICAgIHN1cGVydmlzb3JXb3JrZXIgPSBjb250YWluZXIgIlN1cGVydmlzb3IgLyBXb3JrZXIiICJTdXBlcnZpc29yIGRlY29tcG9zZXMgdGhlIHRhc2sgYW5kIG9yY2hlc3RyYXRlcyBzcGVjaWFsaXNlZCB3b3JrZXIgYWdlbnRzLiIgIiIgIlBhdHRlcm4iIHsKICAgICAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS00LCBSSS0xNywgUkktMjgiCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS00IiAiSGFsbHVjaW5hdGlvbiBhbmQgSW5hY2N1cmF0ZSBPdXRwdXRzIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTE3IiAiTGFjayBvZiBFeHBsYWluYWJpbGl0eSIKICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yOCIgIk11bHRpLUFnZW50IFRydXN0IEJvdW5kYXJ5IFZpb2xhdGlvbnMiCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgc2tpbGxSb3V0aW5nID0gY29udGFpbmVyICJTa2lsbCBCYXNlZCBSb3V0aW5nIiAiUmVxdWVzdCByb3V0ZWQgdG8gYW4gYXZhaWxhYmxlIGFnZW50IHRoYXQgaGFzIHRoZSByZXF1aXJlZCBza2lsbC4iICIiICJQYXR0ZXJuIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgInJpc2tzIiAiUkktMTgsIFJJLTI4IgogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMTgiICJNb2RlbCBPdmVycmVhY2ggLyBFeHBhbmRlZCBVc2UiCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMjgiICJNdWx0aS1BZ2VudCBUcnVzdCBCb3VuZGFyeSBWaW9sYXRpb25zIgogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIGFnZW50QXNUb29sID0gY29udGFpbmVyICJBZ2VudCBhcyBhIFRvb2wiICJPbmUgYWdlbnQgaW52b2tlcyBhbm90aGVyIGFzIGEgdG9vbCwgZW5hYmxpbmcgaGFuZG9mZiB0byBzcGVjaWFsaXN0cy4iICIiICJQYXR0ZXJuIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgInJpc2tzIiAiUkktMjQsIFJJLTI1LCBSSS0yOCIKICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI0IiAiQWdlbnQgQWN0aW9uIEF1dGhvcml6YXRpb24gQnlwYXNzIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI1IiAiVG9vbCBDaGFpbiBNYW5pcHVsYXRpb24gYW5kIEluamVjdGlvbiIKICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yOCIgIk11bHRpLUFnZW50IFRydXN0IEJvdW5kYXJ5IFZpb2xhdGlvbnMiCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CgogICAgICAgICAgICAgICAgZ3JvdXAgIlVuaWZpZWQgQWdlbnQgUnVudGltZSIgewogICAgICAgICAgICAgICAgICAgIHN0YXRlTWdtdCA9IGNvbnRhaW5lciAiU3RhdGUgTWFuYWdlbWVudCIgIkNvbXBsZXRlIHRhc2sgc3RhdGUgZW5hYmxpbmcgcGF1c2UsIHJlc3VtZSBhbmQgaGFuZG9mZi4iICIiIHsKICAgICAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0yNywgUkktMjgiCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yNyIgIkFnZW50IFN0YXRlIFBlcnNpc3RlbmNlIFBvaXNvbmluZyIKICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yOCIgIk11bHRpLUFnZW50IFRydXN0IEJvdW5kYXJ5IFZpb2xhdGlvbnMiCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgc2VjdXJlRXhlYyA9IGNvbnRhaW5lciAiU2VjdXJlIEV4ZWN1dGlvbiIgIkludGVyY2VwdHMgYW5kIHZhbGlkYXRlcyBhbGwgdG9vbCBjYWxsczsgaGFuZGxlcyBleGVjdXRpb24gYW5kIGNyZWRlbnRpYWxzIGluc2lkZSB0aGUgc2FuZGJveC4iICIiIHsKICAgICAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0yNCwgUkktMjUsIFJJLTI5IgogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMjQiICJBZ2VudCBBY3Rpb24gQXV0aG9yaXphdGlvbiBCeXBhc3MiCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMjUiICJUb29sIENoYWluIE1hbmlwdWxhdGlvbiBhbmQgSW5qZWN0aW9uIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI5IiAiQWdlbnQtTWVkaWF0ZWQgQ3JlZGVudGlhbCBEaXNjb3ZlcnkgYW5kIEhhcnZlc3RpbmciCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgY29sbGFiSGFuZG9mZiA9IGNvbnRhaW5lciAiQ29sbGFib3JhdGlvbiAvIEhhbmRvZmYiICJTdGF0ZWZ1bCBjb2xsYWJvcmF0aW9uIGJldHdlZW4gYWdlbnRzIHRocm91Z2ggc2hhcmVkIG1lbW9yeSBhbmQgc3RhdGUuIiAiIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgInJpc2tzIiAiUkktMjcsIFJJLTI4IgogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMjciICJBZ2VudCBTdGF0ZSBQZXJzaXN0ZW5jZSBQb2lzb25pbmciCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMjgiICJNdWx0aS1BZ2VudCBUcnVzdCBCb3VuZGFyeSBWaW9sYXRpb25zIgogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIHdvcmtzcGFjZUZzID0gY29udGFpbmVyICJXb3Jrc3BhY2UgRmlsZSBTeXN0ZW0iICJTYW5kYm94ZWQsIHBlcnNpc3RlbnQgZmlsZSBzeXN0ZW0gZm9yIGxhcmdlIGFydGlmYWN0cy4iICIiICJEYXRhYmFzZSIgewogICAgICAgICAgICAgICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTIsIFJJLTI3LCBSSS0yOSIKICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTIiICJJbmZvcm1hdGlvbiBMZWFrZWQgdG8gVmVjdG9yIFN0b3JlIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI3IiAiQWdlbnQgU3RhdGUgUGVyc2lzdGVuY2UgUG9pc29uaW5nIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI5IiAiQWdlbnQtTWVkaWF0ZWQgQ3JlZGVudGlhbCBEaXNjb3ZlcnkgYW5kIEhhcnZlc3RpbmciCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgYWRhcHRpdmVMZWFybmluZyA9IGNvbnRhaW5lciAiQWRhcHRpdmUgTGVhcm5pbmciICJMZWFybmluZyBzaWduYWxzIGZyb20gZXhlY3V0aW9uIG91dGNvbWVzIHJlZmluZSBwcm9tcHRzLCBhZ2VudCBjb25maWd1cmF0aW9uIGFuZCB0b29sIHNlbGVjdGlvbi4iICIiIHsKICAgICAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS05LCBSSS0xNCwgUkktMjciCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS05IiAiRGF0YSBQb2lzb25pbmciCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMTQiICJJbmFkZXF1YXRlIFN5c3RlbSBBbGlnbm1lbnQiCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMjciICJBZ2VudCBTdGF0ZSBQZXJzaXN0ZW5jZSBQb2lzb25pbmciCiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgZ3JvdXAgIlRvb2xzIExheWVyIiB7CiAgICAgICAgICAgICAgICAgICAgICAgIG1jcENsaWVudCA9IGNvbnRhaW5lciAiTUNQIENsaWVudCIgIlNlY3VyZSBicmlkZ2UgdG8gdGhlIGV4dGVybmFsIE1DUCBMYXllci4iICIiIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTI1LCBSSS0yNiwgUkktMzIiCiAgICAgICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yNSIgIlRvb2wgQ2hhaW4gTWFuaXB1bGF0aW9uIGFuZCBJbmplY3Rpb24iCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI2IiAiTUNQIFNlcnZlciBTdXBwbHkgQ2hhaW4gQ29tcHJvbWlzZSIKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMzIiICJUaGlyZC1QYXJ0eSBDb250ZW50IExvYWRlZCBhcyBBZ2VudCBJbnN0cnVjdGlvbnMiCiAgICAgICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgc2hlbGxUb29sID0gY29udGFpbmVyICJTaGVsbCBUb29sIiAiU2FuZGJveGVkIHNoZWxsIGZvciBiYXNpYyBjb21tYW5kcy4iICIiIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTI0LCBSSS0yNSwgUkktMjkiCiAgICAgICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yNCIgIkFnZW50IEFjdGlvbiBBdXRob3JpemF0aW9uIEJ5cGFzcyIKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMjUiICJUb29sIENoYWluIE1hbmlwdWxhdGlvbiBhbmQgSW5qZWN0aW9uIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yOSIgIkFnZW50LU1lZGlhdGVkIENyZWRlbnRpYWwgRGlzY292ZXJ5IGFuZCBIYXJ2ZXN0aW5nIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgIGlvVG9vbCA9IGNvbnRhaW5lciAiSS9PIFRvb2wiICJSZWFkcyBmcm9tIGFuZCB3cml0ZXMgdG8gdGhlIHdvcmtzcGFjZSBmaWxlIHN5c3RlbS4iICIiIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTI3LCBSSS0yOSIKICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI3IiAiQWdlbnQgU3RhdGUgUGVyc2lzdGVuY2UgUG9pc29uaW5nIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yOSIgIkFnZW50LU1lZGlhdGVkIENyZWRlbnRpYWwgRGlzY292ZXJ5IGFuZCBIYXJ2ZXN0aW5nIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgIHdlYlNlYXJjaFRvb2wgPSBjb250YWluZXIgIldlYiBTZWFyY2ggVG9vbCIgIkJ1aWx0LWluIHdlYiBzZWFyY2guIiAiIiB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0xMCwgUkktMTksIFJJLTIzIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMTAiICJQcm9tcHQgSW5qZWN0aW9uIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS0xOSIgIkRhdGEgUXVhbGl0eSBhbmQgRHJpZnQiCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTIzIiAiSW50ZWxsZWN0dWFsIFByb3BlcnR5IChJUCkgYW5kIENvcHlyaWdodCIKICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgICAgICAgICAgZ3JvdXAgIlNob3J0LVRlcm0gTWVtb3J5IiB7CiAgICAgICAgICAgICAgICAgICAgICAgIGNvbnRleHRNYW5hZ2VyID0gY29udGFpbmVyICJJbi1TZXNzaW9uIENvbnRleHQgTWFuYWdlciIgIlRyaW1taW5nIGFuZCBzdW1tYXJpc2F0aW9uIHRvIG1hbmFnZSBjb250ZXh0IGxlbmd0aCwgY29zdCBhbmQgbGF0ZW5jeS4iICIiIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTQsIFJJLTEwIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktNCIgIkhhbGx1Y2luYXRpb24gYW5kIEluYWNjdXJhdGUgT3V0cHV0cyIKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMTAiICJQcm9tcHQgSW5qZWN0aW9uIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgICAgICBncm91cCAiTG9uZy1UZXJtIE1lbW9yeSIgewogICAgICAgICAgICAgICAgICAgICAgICBzZXNzaW9uU3VtbWFyaWVzID0gY29udGFpbmVyICJTZXNzaW9uIFN1bW1hcmllcyIgIlN1bW1hcmllcyBvZiBwYXN0IGludGVyYWN0aW9ucyBmb3IgZnV0dXJlIHJlZmVyZW5jZS4iICIiICJEYXRhYmFzZSIgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgInJpc2tzIiAiUkktMiwgUkktMjciCiAgICAgICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yIiAiSW5mb3JtYXRpb24gTGVha2VkIHRvIFZlY3RvciBTdG9yZSIKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMjciICJBZ2VudCBTdGF0ZSBQZXJzaXN0ZW5jZSBQb2lzb25pbmciCiAgICAgICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICAgICAgcGVyc29uYWxpemF0aW9uID0gY29udGFpbmVyICJVc2VyIC8gVGFzayBQZXJzb25hbGl6YXRpb24iICJVc2VyIHByZWZlcmVuY2VzIGFuZCB0YXNrLXNwZWNpZmljIGluZm9ybWF0aW9uIGFjcm9zcyBzZXNzaW9ucy4iICIiICJEYXRhYmFzZSIgewogICAgICAgICAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgInJpc2tzIiAiUkktMiwgUkktMTYsIFJJLTI3IgogICAgICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiUkktMiIgIkluZm9ybWF0aW9uIExlYWtlZCB0byBWZWN0b3IgU3RvcmUiCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTE2IiAiQmlhcyBhbmQgRGlzY3JpbWluYXRpb24iCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI3IiAiQWdlbnQgU3RhdGUgUGVyc2lzdGVuY2UgUG9pc29uaW5nIgogICAgICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgfQoKICAgICAgICAgICAgICAgIH0KCiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGdyb3VwICJLbm93bGVkZ2UgTGF5ZXIiIHsKICAgICAgICAgICAgICAgIHNvdXJjZUJhc2VzID0gY29udGFpbmVyICJTb3VyY2UgQmFzZXMiICJJbnRlcm5hbCBhbmQgZXh0ZXJuYWwgYXV0aG9yaXRhdGl2ZSByZXBvc2l0b3JpZXMgKHN0cnVjdHVyZWQsIHVuc3RydWN0dXJlZCwgZ3JhcGgpLiIgIiIgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTksIFJJLTEwLCBSSS0xOSwgUkktMjMiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJSSS05IiAiRGF0YSBQb2lzb25pbmciCiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0xMCIgIlByb21wdCBJbmplY3Rpb24iCiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0xOSIgIkRhdGEgUXVhbGl0eSBhbmQgRHJpZnQiCiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yMyIgIkludGVsbGVjdHVhbCBQcm9wZXJ0eSAoSVApIGFuZCBDb3B5cmlnaHQiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgdmVjdG9yRGJzID0gY29udGFpbmVyICJWZWN0b3IgREJzIiAiVmVjdG9yIHJldHJpZXZhbCBmb3Igc2VtYW50aWMgc2VhcmNoIGFuZCBncm91bmRpbmcuIiAiIiAiRGF0YWJhc2UiIHsKICAgICAgICAgICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgInJpc2tzIiAiUkktMiwgUkktOSwgUkktMTkiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yIiAiSW5mb3JtYXRpb24gTGVha2VkIHRvIFZlY3RvciBTdG9yZSIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTkiICJEYXRhIFBvaXNvbmluZyIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTE5IiAiRGF0YSBRdWFsaXR5IGFuZCBEcmlmdCIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGdyb3VwICJNQ1AgTGF5ZXIiIHsKICAgICAgICAgICAgICAgIG1jcEd1YXJkcmFpbHMgPSBjb250YWluZXIgIk1DUCBHdWFyZHJhaWxzIC8gUG9saWNpZXMiICJaZXJvIHRydXN0LCBBdXRoTiAvIEF1dGhaIGZvciBldmVyeSBNQ1AgcmVxdWVzdDsgdG9vbCBlbnRpdGxlbWVudHMsIHJhdGUgbGltaXRzLCBwYXJhbWV0ZXIgdmFsaWRhdGlvbi4iICJaZXJvVHJ1c3QsIEF1dGhOLCBBdXRoWiIgIkd1YXJkcmFpbHMiIHsKICAgICAgICAgICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgInJpc2tzIiAiUkktMjQsIFJJLTI1LCBSSS0yOSIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI0IiAiQWdlbnQgQWN0aW9uIEF1dGhvcml6YXRpb24gQnlwYXNzIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjUiICJUb29sIENoYWluIE1hbmlwdWxhdGlvbiBhbmQgSW5qZWN0aW9uIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjkiICJBZ2VudC1NZWRpYXRlZCBDcmVkZW50aWFsIERpc2NvdmVyeSBhbmQgSGFydmVzdGluZyIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBtY3BHYXRld2F5ID0gY29udGFpbmVyICJNQ1AgR2F0ZXdheSIgIlZhbGlkYXRlcyBNQ1AgY29ubmVjdGlvbiByZXF1ZXN0cyBhbmQgcm91dGVzIHRoZW0gdG8gdGhlIGNvcnJlY3Qgc2VydmVyIGluc3RhbmNlLiIgIiIgewogICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0yNCwgUkktMjUiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yNCIgIkFnZW50IEFjdGlvbiBBdXRob3JpemF0aW9uIEJ5cGFzcyIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI1IiAiVG9vbCBDaGFpbiBNYW5pcHVsYXRpb24gYW5kIEluamVjdGlvbiIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBtY3BSZWdpc3RyeSA9IGNvbnRhaW5lciAiTUNQIFJlZ2lzdHJ5IiAiQ2F0YWxvZyBvZiBhcHByb3ZlZCBNQ1Agc2VydmVyczsgY29udHJvbGxlZCBvbmJvYXJkaW5nLiIgIiIgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTI2IgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjYiICJNQ1AgU2VydmVyIFN1cHBseSBDaGFpbiBDb21wcm9taXNlIgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIG1jcFpvbyA9IGNvbnRhaW5lciAiTUNQIFpvbyIgIkFwcHJvdmVkIGVudGVycHJpc2UgYW5kIHRoaXJkLXBhcnR5IE1DUCBzZXJ2ZXJzLiIgIiIgIkV4dGVybmFsIiB7CiAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTEsIFJJLTcsIFJJLTI2LCBSSS0yOSwgUkktMzIiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0xIiAiSW5mb3JtYXRpb24gTGVha2VkIFRvIEhvc3RlZCBNb2RlbCIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTciICJBdmFpbGFiaWxpdHkgb2YgRm91bmRhdGlvbmFsIE1vZGVsIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjYiICJNQ1AgU2VydmVyIFN1cHBseSBDaGFpbiBDb21wcm9taXNlIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjkiICJBZ2VudC1NZWRpYXRlZCBDcmVkZW50aWFsIERpc2NvdmVyeSBhbmQgSGFydmVzdGluZyIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTMyIiAiVGhpcmQtUGFydHkgQ29udGVudCBMb2FkZWQgYXMgQWdlbnQgSW5zdHJ1Y3Rpb25zIgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgZ3JvdXAgIkxMTSBMYXllciIgewogICAgICAgICAgICAgICAgbGxtR3VhcmRyYWlscyA9IGNvbnRhaW5lciAiTExNIEd1YXJkcmFpbHMgLyBQb2xpY2llcyIgIlplcm8gdHJ1c3QsIEF1dGhOIC8gQXV0aFogZm9yIGV2ZXJ5IGluZmVyZW5jZTsgcHJvbXB0LWluamVjdGlvbiBjaGVja3MsIG91dHB1dCBmaWx0ZXJpbmcsIGNvc3QgbGltaXRzLiIgIlplcm9UcnVzdCwgQXV0aE4sIEF1dGhaIiAiR3VhcmRyYWlscyIgewogICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0xLCBSSS03LCBSSS0xMCIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTEiICJJbmZvcm1hdGlvbiBMZWFrZWQgVG8gSG9zdGVkIE1vZGVsIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktNyIgIkF2YWlsYWJpbGl0eSBvZiBGb3VuZGF0aW9uYWwgTW9kZWwiCiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0xMCIgIlByb21wdCBJbmplY3Rpb24iCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgbGxtR2F0ZXdheSA9IGNvbnRhaW5lciAiTExNIEdhdGV3YXkiICJSb3V0ZXMgaW5mZXJlbmNlIHJlcXVlc3RzIHRvIHRoZSBjb3JyZWN0IG1vZGVsIGluc3RhbmNlLiIgIiIgewogICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0xLCBSSS03IgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAiUkktMSIgIkluZm9ybWF0aW9uIExlYWtlZCBUbyBIb3N0ZWQgTW9kZWwiCiAgICAgICAgICAgICAgICAgICAgICAgICJSSS03IiAiQXZhaWxhYmlsaXR5IG9mIEZvdW5kYXRpb25hbCBNb2RlbCIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBtb2RlbFJlZ2lzdHJ5ID0gY29udGFpbmVyICJNb2RlbCBSZWdpc3RyeSIgIkNhdGFsb2cgb2YgYXBwcm92ZWQgbW9kZWxzOyB2ZXJzaW9ucywgY29uc3RyYWludHMsIGNvbnRyb2xsZWQgb25ib2FyZGluZy4iICIiICJEYXRhYmFzZSIgewogICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS01LCBSSS04IgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAiUkktNSIgIkZvdW5kYXRpb24gTW9kZWwgVmVyc2lvbmluZyIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTgiICJUYW1wZXJpbmcgV2l0aCB0aGUgRm91bmRhdGlvbmFsIE1vZGVsIgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGxsbVpvbyA9IGNvbnRhaW5lciAiTExNIFpvbyIgIkFwcHJvdmVkIGhvc3RlZCBhbmQgdmVuZG9yIGZvdW5kYXRpb24gbW9kZWxzLiIgIiIgIkV4dGVybmFsLERhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTEsIFJJLTQsIFJJLTUsIFJJLTYsIFJJLTgsIFJJLTE2LCBSSS0xNywgUkktMjMiCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0xIiAiSW5mb3JtYXRpb24gTGVha2VkIFRvIEhvc3RlZCBNb2RlbCIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTQiICJIYWxsdWNpbmF0aW9uIGFuZCBJbmFjY3VyYXRlIE91dHB1dHMiCiAgICAgICAgICAgICAgICAgICAgICAgICJSSS01IiAiRm91bmRhdGlvbiBNb2RlbCBWZXJzaW9uaW5nIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktNiIgIk5vbi1EZXRlcm1pbmlzdGljIEJlaGF2aW91ciIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTgiICJUYW1wZXJpbmcgV2l0aCB0aGUgRm91bmRhdGlvbmFsIE1vZGVsIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktMTYiICJCaWFzIGFuZCBEaXNjcmltaW5hdGlvbiIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTE3IiAiTGFjayBvZiBFeHBsYWluYWJpbGl0eSIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTIzIiAiSW50ZWxsZWN0dWFsIFByb3BlcnR5IChJUCkgYW5kIENvcHlyaWdodCIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGdyb3VwICJPYnNlcnZhYmlsaXR5IExheWVyIiB7CiAgICAgICAgICAgICAgICBsb2dzID0gY29udGFpbmVyICJMb2dzIiAiU3RydWN0dXJlZCBhbmQgdW5zdHJ1Y3R1cmVkIGxvZ3MgZnJvbSBhbGwgbGF5ZXJzLiIgIiIgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTIsIFJJLTIyLCBSSS0yOSIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTIiICJJbmZvcm1hdGlvbiBMZWFrZWQgdG8gVmVjdG9yIFN0b3JlIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjIiICJSZWd1bGF0b3J5IENvbXBsaWFuY2UgYW5kIE92ZXJzaWdodCIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI5IiAiQWdlbnQtTWVkaWF0ZWQgQ3JlZGVudGlhbCBEaXNjb3ZlcnkgYW5kIEhhcnZlc3RpbmciCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgdHJhY2VzID0gY29udGFpbmVyICJUcmFjZXMiICJEaXN0cmlidXRlZCB0cmFjaW5nIGFjcm9zcyB0aGUgcmVxdWVzdCBsaWZlY3ljbGUuIiAiIiAiRGF0YWJhc2UiIHsKICAgICAgICAgICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgInJpc2tzIiAiUkktMiwgUkktMTciCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yIiAiSW5mb3JtYXRpb24gTGVha2VkIHRvIFZlY3RvciBTdG9yZSIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTE3IiAiTGFjayBvZiBFeHBsYWluYWJpbGl0eSIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBtZXRyaWNzID0gY29udGFpbmVyICJNZXRyaWNzIiAiTGF0ZW5jeSwgdGhyb3VnaHB1dCwgZXJyb3JzLCBtb2RlbCB1c2FnZSwgcmVzb3VyY2UgdXNlLiIgIiIgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTciCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJSSS03IiAiQXZhaWxhYmlsaXR5IG9mIEZvdW5kYXRpb25hbCBNb2RlbCIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBldmVudHMgPSBjb250YWluZXIgIkV2ZW50cyIgIlBvbGljeSB2aW9sYXRpb25zLCBtb2RlbCBzZWxlY3Rpb24sIGVzY2FsYXRpb25zLCBldmFsdWF0aW9uIG91dGNvbWVzLiIgIiIgIkRhdGFiYXNlIiB7CiAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTIyIgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjIiICJSZWd1bGF0b3J5IENvbXBsaWFuY2UgYW5kIE92ZXJzaWdodCIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBhbm9tYWx5RGV0ZWN0aW9uID0gY29udGFpbmVyICJBbm9tYWx5IERldGVjdGlvbiIgIkRldGVjdHMgZmFpbHVyZXMsIHJlZ3Jlc3Npb25zLCBtaXN1c2UgYW5kIGVtZXJnaW5nIHJpc2tzLiIgIiIgewogICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0xOSwgUkktMjciCiAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgIHBlcnNwZWN0aXZlcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0xOSIgIkRhdGEgUXVhbGl0eSBhbmQgRHJpZnQiCiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yNyIgIkFnZW50IFN0YXRlIFBlcnNpc3RlbmNlIFBvaXNvbmluZyIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBjb3JyZWxhdGlvbkVuZ2luZSA9IGNvbnRhaW5lciAiQ29ycmVsYXRpb24gRW5naW5lIiAiQ29ycmVsYXRlcyBzaWduYWxzIHRvIGNvbm5lY3Qgc3ltcHRvbXMgdG8gcm9vdCBjYXVzZXMuIiAiIiB7CiAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTE3IgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAiUkktMTciICJMYWNrIG9mIEV4cGxhaW5hYmlsaXR5IgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQoKICAgICAgICAgICAgZ3JvdXAgIkV2YWx1YXRpb24gTGF5ZXIiIHsKICAgICAgICAgICAgICAgIGZlZWRiYWNrRW5naW5lID0gY29udGFpbmVyICJGZWVkYmFjayIgIkNvcnJlY3RuZXNzLCBwcmVmZXJlbmNlIGFuZCBxdWFsaXR5IHNpZ25hbHMuIiAiIiB7CiAgICAgICAgICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAgICAgICAgICJyaXNrcyIgIlJJLTksIFJJLTE0LCBSSS0xNiIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTkiICJEYXRhIFBvaXNvbmluZyIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTE0IiAiSW5hZGVxdWF0ZSBTeXN0ZW0gQWxpZ25tZW50IgogICAgICAgICAgICAgICAgICAgICAgICAiUkktMTYiICJCaWFzIGFuZCBEaXNjcmltaW5hdGlvbiIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBodW1hblN1cGVydmlzaW9uID0gY29udGFpbmVyICJIdW1hbiBTdXBlcnZpc2lvbiIgIkluc3BlY3QsIGFwcHJvdmUsIGNvcnJlY3Qgb3Igb3ZlcnJpZGUgYWdlbnQgb3V0cHV0cy4iICIiIHsKICAgICAgICAgICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgInJpc2tzIiAiUkktMTgsIFJJLTIyLCBSSS0zMSIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICAgICAgcGVyc3BlY3RpdmVzIHsKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTE4IiAiTW9kZWwgT3ZlcnJlYWNoIC8gRXhwYW5kZWQgVXNlIgogICAgICAgICAgICAgICAgICAgICAgICAiUkktMjIiICJSZWd1bGF0b3J5IENvbXBsaWFuY2UgYW5kIE92ZXJzaWdodCIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTMxIiAiSHVtYW4gQXBwcm92YWwgRmF0aWd1ZSBhbmQgQ29uc2VudCBHYXRlIERlZ3JhZGF0aW9uIgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIHJ1bnRpbWVQcm90ZWN0aW9uID0gY29udGFpbmVyICJSdW50aW1lIFByb3RlY3Rpb24iICJEZXRlY3RzIHVuc2FmZSBvciBub24tY29tcGxpYW50IGJlaGF2aW91cjsgYmxvY2tzIGFjdGlvbnMgb3IgZXNjYWxhdGVzLiIgIiIgewogICAgICAgICAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgICAgICAgICAicmlza3MiICJSSS0xNCwgUkktMjQsIFJJLTI1IgogICAgICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgICAgICBwZXJzcGVjdGl2ZXMgewogICAgICAgICAgICAgICAgICAgICAgICAiUkktMTQiICJJbmFkZXF1YXRlIFN5c3RlbSBBbGlnbm1lbnQiCiAgICAgICAgICAgICAgICAgICAgICAgICJSSS0yNCIgIkFnZW50IEFjdGlvbiBBdXRob3JpemF0aW9uIEJ5cGFzcyIKICAgICAgICAgICAgICAgICAgICAgICAgIlJJLTI1IiAiVG9vbCBDaGFpbiBNYW5pcHVsYXRpb24gYW5kIEluamVjdGlvbiIKICAgICAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KCiAgICAgICAgfQoKICAgICAgICB1c2VyIC0+IGFwcGxpY2F0aW9uICJHb2FscywgaW5wdXRzOyByZXZpZXdzIGFuZCBhcHByb3ZlcyBvdXRwdXRzIgogICAgICAgIGFwcGxpY2F0aW9uIC0+IGFnZW50R2F0ZXdheSAiQWdlbnQgcmVxdWVzdHMiCiAgICAgICAgYWdlbnRHYXRld2F5IC0+IGFnZW50UmVnaXN0cnkgIlJlc29sdmVzIHRhcmdldCBhZ2VudHMiCiAgICAgICAgYWdlbnRHYXRld2F5IC0+IGFnZW50R3VhcmRyYWlscyAiQXV0aE4gLyBBdXRoWiwgaW5wdXQgdmFsaWRhdGlvbiIKICAgICAgICBhZ2VudEdhdGV3YXkgLT4gc2tpbGxSb3V0aW5nICJSb3V0ZXMgdmFsaWRhdGVkIHJlcXVlc3RzIgogICAgICAgIHN1cGVydmlzb3JXb3JrZXIgLT4gY29sbGFiSGFuZG9mZiAiRGVsZWdhdGVzIHdvcmsgdmlhIgogICAgICAgIGFnZW50QXNUb29sIC0+IHNlY3VyZUV4ZWMgIkludm9rZXMgYWdlbnRzIGFzIHRvb2xzIHZpYSIKICAgICAgICBjb2xsYWJIYW5kb2ZmIC0+IHN0YXRlTWdtdCAiU2hhcmVzIHRhc2sgc3RhdGUiCiAgICAgICAgc3RhdGVNZ210IC0+IHNlc3Npb25TdW1tYXJpZXMgIlBlcnNpc3RzIGFuZCByZXN0b3JlcyBjb250ZXh0IgogICAgICAgIHNlY3VyZUV4ZWMgLT4gbWNwQ2xpZW50ICJWYWxpZGF0ZWQgdG9vbCBjYWxscyIKICAgICAgICBzZWN1cmVFeGVjIC0+IHNoZWxsVG9vbCAiIgogICAgICAgIHNlY3VyZUV4ZWMgLT4gaW9Ub29sICIiCiAgICAgICAgc2VjdXJlRXhlYyAtPiB3ZWJTZWFyY2hUb29sICIiCiAgICAgICAgaW9Ub29sIC0+IHdvcmtzcGFjZUZzICJSZWFkcyBhbmQgd3JpdGVzIGZpbGVzIgogICAgICAgIGNvbnRleHRNYW5hZ2VyIC0+IHZlY3RvckRicyAiUmV0cmlldmVzIGdyb3VuZGluZyBjb250ZXh0IgogICAgICAgIGNvbnRleHRNYW5hZ2VyIC0+IHNvdXJjZUJhc2VzICJRdWVyaWVzIHNvdXJjZSBkYXRhIgogICAgICAgIGNvbnRleHRNYW5hZ2VyIC0+IGxsbUdhdGV3YXkgIkluZmVyZW5jZSByZXF1ZXN0cyIKICAgICAgICBtY3BDbGllbnQgLT4gbWNwR2F0ZXdheSAiTUNQIGNvbm5lY3Rpb24gcmVxdWVzdHMiICJNQ1AiCiAgICAgICAgbWNwR2F0ZXdheSAtPiBtY3BHdWFyZHJhaWxzICJBdXRoTiAvIEF1dGhaLCBwYXJhbWV0ZXIgdmFsaWRhdGlvbiIKICAgICAgICBtY3BHYXRld2F5IC0+IG1jcFJlZ2lzdHJ5ICJMb29rcyB1cCBhcHByb3ZlZCBzZXJ2ZXJzIgogICAgICAgIG1jcEdhdGV3YXkgLT4gbWNwWm9vICJSb3V0ZWQgTUNQIGNhbGxzIiAiTUNQIgogICAgICAgIGxsbUdhdGV3YXkgLT4gbGxtR3VhcmRyYWlscyAiQXV0aE4gLyBBdXRoWiwgaW5wdXQgLyBvdXRwdXQgZmlsdGVyaW5nIgogICAgICAgIGxsbUdhdGV3YXkgLT4gbW9kZWxSZWdpc3RyeSAiTG9va3MgdXAgYXBwcm92ZWQgbW9kZWxzIgogICAgICAgIGxsbUdhdGV3YXkgLT4gbGxtWm9vICJSb3V0ZWQgaW5mZXJlbmNlIHJlcXVlc3RzIgogICAgICAgIHNlY3VyZUV4ZWMgLT4gcnVudGltZVByb3RlY3Rpb24gIkFnZW50IGFjdGlvbnMgZm9yIGNoZWNraW5nIiAiIiAiT3ZlcnNpZ2h0IgogICAgICAgIHJ1bnRpbWVQcm90ZWN0aW9uIC0+IHNlY3VyZUV4ZWMgIkJsb2NrcyAvIGVzY2FsYXRpb25zIiAiIiAiT3ZlcnNpZ2h0IgogICAgICAgIGh1bWFuU3VwZXJ2aXNpb24gLT4gYXBwbGljYXRpb24gIkFwcHJvdmFscyBhbmQgb3ZlcnJpZGVzIiAiIiAiT3ZlcnNpZ2h0IgogICAgICAgIGZlZWRiYWNrRW5naW5lIC0+IGFkYXB0aXZlTGVhcm5pbmcgIkZlZWRiYWNrIHNpZ25hbHMiICIiICJPdmVyc2lnaHQiCiAgICAgICAgbG9ncyAtPiBjb3JyZWxhdGlvbkVuZ2luZSAiIgogICAgICAgIHRyYWNlcyAtPiBjb3JyZWxhdGlvbkVuZ2luZSAiIgogICAgICAgIG1ldHJpY3MgLT4gYW5vbWFseURldGVjdGlvbiAiIgogICAgICAgIGV2ZW50cyAtPiBhbm9tYWx5RGV0ZWN0aW9uICIiCiAgICAgICAgYXBwbGljYXRpb24gLT4gbG9ncyAiIiAiIiAiVGVsZW1ldHJ5IiB7CiAgICAgICAgICAgIHByb3BlcnRpZXMgewogICAgICAgICAgICAgICAgInNpZ25hbHMiICJJbnRlcmFjdGlvbiBsb2dzLCBzZXNzaW9uIGV2ZW50cyIKICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBhZ2VudEdhdGV3YXkgLT4gZXZlbnRzICIiICIiICJUZWxlbWV0cnkiIHsKICAgICAgICAgICAgcHJvcGVydGllcyB7CiAgICAgICAgICAgICAgICAic2lnbmFscyIgIlJvdXRpbmcsIHBvbGljeSwgYWNjZXNzIHNpZ25hbHMiCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgc2VjdXJlRXhlYyAtPiB0cmFjZXMgIiIgIiIgIlRlbGVtZXRyeSIgewogICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICJzaWduYWxzIiAiUmVhc29uaW5nIHRyYWNlcywgZXhlY3V0aW9uIG1ldHJpY3MiCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgdmVjdG9yRGJzIC0+IG1ldHJpY3MgIiIgIiIgIlRlbGVtZXRyeSIgewogICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICJzaWduYWxzIiAiUmV0cmlldmFsIG1ldHJpY3MsIHNlYXJjaCB0cmFjZXMiCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgbWNwR2F0ZXdheSAtPiBldmVudHMgIiIgIiIgIlRlbGVtZXRyeSIgewogICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICJzaWduYWxzIiAiUm91dGluZywgcG9saWN5LCBhY2Nlc3Mgc2lnbmFscyIKICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBsbG1HYXRld2F5IC0+IG1ldHJpY3MgIiIgIiIgIlRlbGVtZXRyeSIgewogICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICJzaWduYWxzIiAiTW9kZWwgdXNhZ2UsIHJvdXRpbmcgc2lnbmFscyIKICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBydW50aW1lUHJvdGVjdGlvbiAtPiBldmVudHMgIiIgIiIgIlRlbGVtZXRyeSIgewogICAgICAgICAgICBwcm9wZXJ0aWVzIHsKICAgICAgICAgICAgICAgICJzaWduYWxzIiAiRmVlZGJhY2sgZXZlbnRzLCBwcm90ZWN0aW9uIHNpZ25hbHMiCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9CgogICAgdmlld3MgewogICAgICAgIGNvbnRhaW5lciBwbGF0Zm9ybSAiT3ZlcnZpZXciICJBbGwgbGF5ZXJzLCBhcnJhbmdlZCBsaWtlIHRoZSBkcmF3LmlvIGRpYWdyYW0uIiB7CiAgICAgICAgICAgIGluY2x1ZGUgKgogICAgICAgIH0KCgogICAgICAgIHN0eWxlcyB7CiAgICAgICAgICAgIGVsZW1lbnQgIkVsZW1lbnQiIHsKICAgICAgICAgICAgICAgIG1ldGFkYXRhIGZhbHNlCiAgICAgICAgICAgICAgICBkZXNjcmlwdGlvbiBmYWxzZQogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIlBlcnNvbiIgewogICAgICAgICAgICAgICAgc2hhcGUgUGVyc29uCiAgICAgICAgICAgICAgICB3aWR0aCAzMDAKICAgICAgICAgICAgICAgIGhlaWdodCAzMDAKICAgICAgICAgICAgICAgIGJhY2tncm91bmQgIzA4NDI3YgogICAgICAgICAgICAgICAgY29sb3IgI2ZmZmZmZgogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkNvbnRhaW5lciIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjNDM4ZGQ1CiAgICAgICAgICAgICAgICBjb2xvciAjZmZmZmZmCiAgICAgICAgICAgICAgICB3aWR0aCAzNDAKICAgICAgICAgICAgICAgIGhlaWdodCAxMDAKICAgICAgICAgICAgICAgIGZvbnRTaXplIDIyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiRGF0YWJhc2UiIHsKICAgICAgICAgICAgICAgIHNoYXBlIEN5bGluZGVyCiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiR3VhcmRyYWlscyIgewogICAgICAgICAgICAgICAgYmFja2dyb3VuZCAjMmY2YWE1CiAgICAgICAgICAgIH0KICAgICAgICAgICAgZWxlbWVudCAiUGF0dGVybiIgewogICAgICAgICAgICAgICAgc2hhcGUgUm91bmRlZEJveAogICAgICAgICAgICB9CiAgICAgICAgICAgIGVsZW1lbnQgIkV4dGVybmFsIiB7CiAgICAgICAgICAgICAgICBiYWNrZ3JvdW5kICM5OTk5OTkKICAgICAgICAgICAgfQogICAgICAgICAgICAvLyBMYXllcnM6IHNvbGlkIGxpZ2h0IGJvcmRlcnMsIHNvIHRoZXkgY2FuJ3QgYmUgbWlzdGFrZW4gZm9yIGFycm93cy4KICAgICAgICAgICAgZWxlbWVudCAiR3JvdXAiIHsKICAgICAgICAgICAgICAgIGNvbG9yICM0NDQ0NDQKICAgICAgICAgICAgICAgIHN0cm9rZSAjYzRjNGM0CiAgICAgICAgICAgICAgICBzdHJva2VXaWR0aCAzCiAgICAgICAgICAgICAgICBib3JkZXIgc29saWQKICAgICAgICAgICAgfQogICAgICAgICAgICByZWxhdGlvbnNoaXAgIlJlbGF0aW9uc2hpcCIgewogICAgICAgICAgICAgICAgc3R5bGUgc29saWQKICAgICAgICAgICAgICAgIHJvdXRpbmcgRGlyZWN0CiAgICAgICAgICAgICAgICB0aGlja25lc3MgMwogICAgICAgICAgICAgICAgZm9udFNpemUgMjAKICAgICAgICAgICAgICAgIHdpZHRoIDI2MAogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAiVGVsZW1ldHJ5IiB7CiAgICAgICAgICAgICAgICBjb2xvciAjZDk4MjJiCiAgICAgICAgICAgICAgICB0aGlja25lc3MgMgogICAgICAgICAgICB9CiAgICAgICAgICAgIHJlbGF0aW9uc2hpcCAiT3ZlcnNpZ2h0IiB7CiAgICAgICAgICAgICAgICBjb2xvciAjN2QzYzk4CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cgp9",
+    "structurizr.inspection.info" : "0",
+    "structurizr.inspection.ignore" : "0",
+    "structurizr.inspection.warning" : "0"
+  },
+  "views" : {
+    "configuration" : {
+      "styles" : {
+        "elements" : [ {
+          "background" : "#438dd5",
+          "color" : "#ffffff",
+          "fontSize" : 22,
+          "height" : 100,
+          "tag" : "Container",
+          "width" : 340
+        }, {
+          "shape" : "Cylinder",
+          "tag" : "Database"
+        }, {
+          "description" : false,
+          "metadata" : false,
+          "tag" : "Element"
+        }, {
+          "background" : "#999999",
+          "tag" : "External"
+        }, {
+          "border" : "Solid",
+          "color" : "#444444",
+          "stroke" : "#c4c4c4",
+          "strokeWidth" : 3,
+          "tag" : "Group"
+        }, {
+          "background" : "#2f6aa5",
+          "tag" : "Guardrails"
+        }, {
+          "shape" : "RoundedBox",
+          "tag" : "Pattern"
+        }, {
+          "background" : "#08427b",
+          "color" : "#ffffff",
+          "height" : 300,
+          "shape" : "Person",
+          "tag" : "Person",
+          "width" : 300
+        } ],
+        "relationships" : [ {
+          "color" : "#7d3c98",
+          "tag" : "Oversight"
+        }, {
+          "fontSize" : 20,
+          "routing" : "Direct",
+          "style" : "Solid",
+          "tag" : "Relationship",
+          "thickness" : 3,
+          "width" : 260
+        }, {
+          "color" : "#d9822b",
+          "tag" : "Telemetry",
+          "thickness" : 2
+        } ]
+      },
+      "terminology" : { }
+    },
+    "containerViews" : [ {
+      "description" : "All layers, arranged like the draw.io diagram.",
+      "dimensions" : {
+        "height" : 5347,
+        "width" : 4834
+      },
+      "elements" : [ {
+        "id" : "1",
+        "x" : 1993,
+        "y" : 300
+      }, {
+        "id" : "3",
+        "x" : 1973,
+        "y" : 688
+      }, {
+        "id" : "4",
+        "x" : 1428,
+        "y" : 1108
+      }, {
+        "id" : "5",
+        "x" : 1973,
+        "y" : 1108
+      }, {
+        "id" : "6",
+        "x" : 2508,
+        "y" : 1110
+      }, {
+        "id" : "7",
+        "x" : 1428,
+        "y" : 1774
+      }, {
+        "id" : "8",
+        "x" : 1956,
+        "y" : 1774
+      }, {
+        "id" : "9",
+        "x" : 2484,
+        "y" : 1774
+      }, {
+        "id" : "10",
+        "x" : 1428,
+        "y" : 2260
+      }, {
+        "id" : "11",
+        "x" : 1908,
+        "y" : 2260
+      }, {
+        "id" : "12",
+        "x" : 1428,
+        "y" : 2452
+      }, {
+        "id" : "13",
+        "x" : 1908,
+        "y" : 2452
+      }, {
+        "id" : "14",
+        "x" : 1428,
+        "y" : 2644
+      }, {
+        "id" : "15",
+        "x" : 2526,
+        "y" : 2356
+      }, {
+        "id" : "16",
+        "x" : 2526,
+        "y" : 2500
+      }, {
+        "id" : "17",
+        "x" : 2526,
+        "y" : 2644
+      }, {
+        "id" : "18",
+        "x" : 2526,
+        "y" : 2788
+      }, {
+        "id" : "19",
+        "x" : 1536,
+        "y" : 3122
+      }, {
+        "id" : "20",
+        "x" : 2526,
+        "y" : 3090
+      }, {
+        "id" : "21",
+        "x" : 2526,
+        "y" : 3220
+      }, {
+        "id" : "22",
+        "x" : 450,
+        "y" : 3122
+      }, {
+        "id" : "23",
+        "x" : 450,
+        "y" : 3290
+      }, {
+        "id" : "24",
+        "x" : 3463,
+        "y" : 2188
+      }, {
+        "id" : "25",
+        "x" : 3463,
+        "y" : 2356
+      }, {
+        "id" : "26",
+        "x" : 3463,
+        "y" : 2517
+      }, {
+        "id" : "27",
+        "x" : 4044,
+        "y" : 2356
+      }, {
+        "id" : "28",
+        "x" : 3463,
+        "y" : 3038
+      }, {
+        "id" : "29",
+        "x" : 3463,
+        "y" : 3206
+      }, {
+        "id" : "30",
+        "x" : 3463,
+        "y" : 3366
+      }, {
+        "id" : "31",
+        "x" : 4044,
+        "y" : 3206
+      }, {
+        "id" : "32",
+        "x" : 1516,
+        "y" : 3987
+      }, {
+        "id" : "33",
+        "x" : 1998,
+        "y" : 3987
+      }, {
+        "id" : "34",
+        "x" : 2468,
+        "y" : 3987
+      }, {
+        "id" : "35",
+        "x" : 1516,
+        "y" : 4157
+      }, {
+        "id" : "36",
+        "x" : 1996,
+        "y" : 4157
+      }, {
+        "id" : "37",
+        "x" : 2468,
+        "y" : 4157
+      }, {
+        "id" : "38",
+        "x" : 1524,
+        "y" : 4797
+      }, {
+        "id" : "39",
+        "x" : 1980,
+        "y" : 4797
+      }, {
+        "id" : "40",
+        "x" : 2460,
+        "y" : 4797
+      } ],
+      "externalSoftwareSystemBoundariesVisible" : false,
+      "key" : "Overview",
+      "name" : "Container View: Multi-Agent Platform",
+      "order" : 1,
+      "relationships" : [ {
+        "id" : "41"
+      }, {
+        "id" : "43"
+      }, {
+        "id" : "44"
+      }, {
+        "id" : "45"
+      }, {
+        "id" : "46"
+      }, {
+        "id" : "47",
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 1383,
+          "y" : 1824
+        }, {
+          "x" : 1383,
+          "y" : 2502
+        } ]
+      }, {
+        "id" : "48",
+        "position" : 12
+      }, {
+        "id" : "49"
+      }, {
+        "id" : "50",
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 1838,
+          "y" : 2310
+        }, {
+          "x" : 1838,
+          "y" : 2837
+        }, {
+          "x" : 2324,
+          "y" : 2837
+        }, {
+          "x" : 2324,
+          "y" : 3140
+        } ]
+      }, {
+        "id" : "51"
+      }, {
+        "id" : "52"
+      }, {
+        "id" : "53"
+      }, {
+        "id" : "54"
+      }, {
+        "id" : "55"
+      }, {
+        "id" : "56"
+      }, {
+        "id" : "57"
+      }, {
+        "id" : "58",
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 1706,
+          "y" : 3450
+        }, {
+          "x" : 3082,
+          "y" : 3450
+        }, {
+          "x" : 3082,
+          "y" : 3256
+        } ]
+      }, {
+        "id" : "59"
+      }, {
+        "id" : "60"
+      }, {
+        "id" : "61"
+      }, {
+        "id" : "62"
+      }, {
+        "id" : "63"
+      }, {
+        "id" : "64"
+      }, {
+        "id" : "65"
+      }, {
+        "id" : "66",
+        "position" : 24,
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 2008,
+          "y" : 2061
+        }, {
+          "x" : 3280,
+          "y" : 2061
+        }, {
+          "x" : 3280,
+          "y" : 4827
+        } ]
+      }, {
+        "id" : "67",
+        "position" : 10,
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 3346,
+          "y" : 4862
+        }, {
+          "x" : 3346,
+          "y" : 2135
+        }, {
+          "x" : 2098,
+          "y" : 2135
+        } ]
+      }, {
+        "id" : "68",
+        "position" : 93,
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 2150,
+          "y" : 4935
+        }, {
+          "x" : 921,
+          "y" : 4935
+        }, {
+          "x" : 921,
+          "y" : 713
+        } ]
+      }, {
+        "id" : "69",
+        "position" : 8,
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 1002,
+          "y" : 4847
+        }, {
+          "x" : 1002,
+          "y" : 2694
+        } ]
+      }, {
+        "id" : "70"
+      }, {
+        "id" : "71"
+      }, {
+        "id" : "72"
+      }, {
+        "id" : "73"
+      }, {
+        "id" : "74",
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 2053,
+          "y" : 818
+        }, {
+          "x" : 1084,
+          "y" : 818
+        }, {
+          "x" : 1084,
+          "y" : 4037
+        } ]
+      }, {
+        "id" : "75",
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 1933,
+          "y" : 1238
+        }, {
+          "x" : 1165,
+          "y" : 1238
+        }, {
+          "x" : 1165,
+          "y" : 4207
+        } ]
+      }, {
+        "id" : "76",
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 2400,
+          "y" : 2345
+        }, {
+          "x" : 2400,
+          "y" : 3867
+        }, {
+          "x" : 2248,
+          "y" : 3867
+        } ]
+      }, {
+        "id" : "77",
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 1246,
+          "y" : 3340
+        }, {
+          "x" : 1246,
+          "y" : 3728
+        }, {
+          "x" : 2568,
+          "y" : 3728
+        } ]
+      }, {
+        "id" : "78",
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 3214,
+          "y" : 2456
+        }, {
+          "x" : 3214,
+          "y" : 4495
+        }, {
+          "x" : 1950,
+          "y" : 4495
+        }, {
+          "x" : 1950,
+          "y" : 4245
+        } ]
+      }, {
+        "id" : "79",
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 3148,
+          "y" : 3296
+        }, {
+          "x" : 3148,
+          "y" : 3798
+        }, {
+          "x" : 2708,
+          "y" : 3798
+        } ]
+      }, {
+        "id" : "80",
+        "routing" : "Direct",
+        "vertices" : [ {
+          "x" : 2550,
+          "y" : 4621
+        }, {
+          "x" : 1905,
+          "y" : 4621
+        }, {
+          "x" : 1905,
+          "y" : 4230
+        } ]
+      } ],
+      "softwareSystemId" : "2"
+    } ]
+  }
+}
